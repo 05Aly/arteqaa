@@ -18,6 +18,10 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = env('SECRET_KEY', default='django-insecure-default-key-for-dev')
 DEBUG = env('DEBUG', default=True)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
+CSRF_TRUSTED_ORIGINS = env.list(
+    'CSRF_TRUSTED_ORIGINS',
+    default=['https://*.vercel.app', 'http://127.0.0.1:8000', 'http://localhost:8000']
+)
 
 # Custom user model
 AUTH_USER_MODEL = 'accounts.User'
