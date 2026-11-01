@@ -1,0 +1,163 @@
+<!-- templates/accounts/instructor_dashboard.html -->
+{% extends 'base.html' %}
+{% block title %}مجلس الأستاذ - ارتقاء الأكاديمية{% endblock %}
+
+{% block extra_css %}
+<style>
+.dashboard-banner {
+    background: linear-gradient(135deg, #4A0C16 0%, #2D050D 100%);
+    padding: 3.5rem 5%;
+    color: #FAF6EE;
+    border-bottom: 2px solid var(--c-gold);
+}
+.dashboard-layout { padding: 3.5rem 5%; max-width: 1350px; margin: 0 auto; }
+.dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+.dashboard-header h2 { font-family: var(--font-heading); font-size: 2rem; font-weight: 700; color: var(--c-burgundy-dark); }
+
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.5rem; margin-bottom: 3.5rem; }
+.stat-card {
+    background: #FFFFFF; padding: 1.75rem 1.5rem; border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-classic); border: 1px solid var(--c-border);
+    outline: 1px solid var(--c-gold-soft); outline-offset: -5px;
+    display: flex; align-items: center; gap: 1.25rem;
+}
+.stat-icon {
+    width: 58px; height: 58px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; flex-shrink: 0;
+    border: 1px solid var(--c-gold);
+}
+.stat-num {
+    font-family: var(--font-classic); font-size: 2.1rem; font-weight: 800; color: var(--c-burgundy-dark); line-height: 1.1;
+}
+.stat-label { color: var(--c-text-muted); font-size: 0.95rem; font-weight: 700; font-family: var(--font-heading); margin-top: 0.2rem; }
+
+.status-badge { padding: 0.25rem 0.85rem; border-radius: var(--radius-sm); font-size: 0.78rem; font-weight: 800; }
+.status-published { background: rgba(27, 94, 75, 0.1); border: 1px solid var(--c-emerald); color: var(--c-emerald); }
+.status-draft { background: rgba(184, 95, 24, 0.1); border: 1px solid var(--c-amber); color: var(--c-amber); }
+
+.course-actions {
+    padding: 1rem 1.4rem;
+    background: var(--c-parchment-bg);
+    border-top: 1px solid var(--c-border);
+    display: flex;
+    gap: 0.65rem;
+}
+.btn-action {
+    flex: 1; text-align: center; padding: 0.55rem 0.75rem; border-radius: var(--radius-sm);
+    font-weight: 700; font-size: 0.88rem; transition: var(--transition);
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;
+}
+.btn-edit { background: #FFFFFF; border: 1px solid var(--c-border); color: var(--c-text-main); }
+.btn-edit:hover { border-color: var(--c-burgundy); color: var(--c-burgundy); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-banner">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+        <div>
+            <div style="font-family: var(--font-heading); color: var(--c-gold-light); font-size: 1.05rem; margin-bottom: 0.25rem;">❖ مَجْلِسُ الأُسْتَاذِ وَالمُعَلِّمِ ❖</div>
+            <h1 style="font-family: var(--font-heading); font-size: 2.6rem; font-weight: 700; margin-bottom: 0.4rem;">مرحباً أستاذنا الفاضل {{ user.display_name }}</h1>
+            <p style="color: #D3C3B5; font-size: 1.15rem; font-family: var(--font-heading);">أدر مساقاتك المنهجية، حرر شروحك وأبوابك، وتابع طلابك المنتسبين</p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline" style="color: #FFFFFF; border-color: var(--c-gold);">
+                <span class="material-icons-round">manage_accounts</span> السجل الشخصي
+            </a>
+            <a href="{% url 'courses:create' %}" class="btn btn-gold">
+                <span class="material-icons-round">edit_note</span> تدوين مساق جديد
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-layout">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(103, 17, 32, 0.08); color: var(--c-burgundy);">
+                <span class="material-icons-round">auto_stories</span>
+            </div>
+            <div>
+                <div class="stat-num">{{ courses.count }}</div>
+                <div class="stat-label">مجموع المساقات ({{ published_count }} منشور)</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(27, 94, 75, 0.08); color: var(--c-emerald);">
+                <span class="material-icons-round">school</span>
+            </div>
+            <div>
+                <div class="stat-num">{{ total_students }}</div>
+                <div class="stat-label">إجمالي الطلاب المنتسبين</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: rgba(194, 155, 83, 0.12); color: var(--c-gold-dark);">
+                <span class="material-icons-round">star</span>
+            </div>
+            <div>
+                <div class="stat-num">{{ avg_rating|default:"5.0" }} ★</div>
+                <div class="stat-label">متوسط التزكيات الأكاديمية</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-header">
+        <h2>ديوان المساقات المقيدة باسمكم</h2>
+    </div>
+
+    <div class="grid cols-3">
+        {% for course in courses %}
+        <div class="course-card">
+            <div class="course-img-wrapper">
+                {% if course.thumbnail %}
+                    <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="course-img">
+                {% else %}
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--c-burgundy-dark), var(--c-burgundy)); color: var(--c-gold-light);">
+                        <span class="material-icons-round" style="font-size: 3.5rem;">menu_book</span>
+                    </div>
+                {% endif %}
+                <span class="course-level-pill">{{ course.get_level_display }}</span>
+            </div>
+            
+            <div class="course-body">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <span class="course-badge" style="margin: 0;">{{ course.category.name|default:"عام" }}</span>
+                    <span class="status-badge {% if course.status == 'published' %}status-published{% else %}status-draft{% endif %}">
+                        {{ course.get_status_display }}
+                    </span>
+                </div>
+                <h3 class="course-title">
+                    <a href="{% url 'courses:detail' course.slug %}">{{ course.title }}</a>
+                </h3>
+                <div class="course-meta">
+                    <span><span class="material-icons-round" style="font-size: 1.1rem; color: var(--c-burgundy);">group</span> {{ course.students_count|default:0 }} طالب</span>
+                    <span><span class="material-icons-round" style="font-size: 1.1rem; color: var(--c-gold);">play_lesson</span> {{ course.lessons_count|default:0 }} درس</span>
+                    <span><span class="material-icons-round text-yellow" style="font-size: 1.1rem;">star</span> {{ course.average_rating|default:"-" }}</span>
+                </div>
+                <div style="font-weight: 800; font-family: var(--font-classic); color: var(--c-burgundy); font-size: 1.1rem;">
+                    الرسم: {% if course.effective_price == 0 %}مجاني بالكامل{% else %}${{ course.effective_price }}{% endif %}
+                </div>
+            </div>
+            
+            <div class="course-actions">
+                <a href="{% url 'courses:edit' course.slug %}" class="btn-action btn-edit">
+                    <span class="material-icons-round" style="font-size: 1.1rem;">edit</span> بيانات المساق
+                </a>
+                <a href="{% url 'courses:manage_content' course.slug %}" class="btn-action" style="background: var(--c-burgundy); color: #FFFFFF;">
+                    <span class="material-icons-round" style="font-size: 1.1rem; color: var(--c-gold-light);">history_edu</span> إدارة المنهج
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 5rem 2rem; background: #FFFFFF; border-radius: var(--radius-sm); border: 1px dashed var(--c-gold);">
+            <span class="material-icons-round" style="font-size: 4rem; color: var(--c-gold); margin-bottom: 1rem;">history_edu</span>
+            <h3 style="font-family: var(--font-heading); color: var(--c-burgundy-dark); font-size: 1.8rem; margin-bottom: 0.5rem;">لم تُقيدوا مساقاً دراسياً بعد</h3>
+            <p style="color: var(--c-text-muted); margin-bottom: 1.5rem; font-family: var(--font-heading); font-size: 1.1rem;">ابدأ بتدوين أول مساق تعليمي وأضف الأبواب والدروس المصورة والملفات المرفقة بسهولة!</p>
+            <a href="{% url 'courses:create' %}" class="btn btn-primary">تدوين مساق جديد</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

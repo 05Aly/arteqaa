@@ -1,0 +1,517 @@
+<!-- templates/courses/detail.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ course.title }} - صَحِيفَةُ المَسَاقِ | ارتقاء{% endblock %}
+
+{% block extra_css %}
+<style>
+.course-detail-header {
+    background: linear-gradient(135deg, #4A0C16 0%, #2D050D 100%);
+    color: #FAF6EE;
+    padding: 4.5rem 5% 4rem;
+    position: relative;
+    border-bottom: 2px solid var(--c-gold);
+}
+
+.header-content {
+    max-width: 880px;
+}
+
+.course-badge-large {
+    background: rgba(194, 155, 83, 0.15);
+    border: 1px solid var(--c-gold);
+    color: var(--c-gold-light);
+    padding: 0.35rem 1.2rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.92rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    display: inline-block;
+    margin-bottom: 1.25rem;
+}
+
+.detail-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 2.8rem;
+    padding: 3.5rem 5%;
+    max-width: 1380px;
+    margin: 0 auto;
+    align-items: start;
+}
+@media (max-width: 980px) {
+    .detail-layout { grid-template-columns: 1fr; }
+}
+
+/* Classical Parchment Content Boxes */
+.content-box {
+    background: #FFFFFF;
+    border-radius: var(--radius-sm);
+    padding: 2.4rem;
+    box-shadow: var(--shadow-classic);
+    margin-bottom: 2rem;
+    border: 1px solid var(--c-border);
+    outline: 1px solid var(--c-gold-soft);
+    outline-offset: -6px;
+}
+
+.content-box h2 {
+    font-family: var(--font-heading);
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin-bottom: 1.4rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px dashed var(--c-border);
+    color: var(--c-burgundy-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.content-box h2 .material-icons-round {
+    color: var(--c-gold);
+}
+
+/* Accordion for Curriculum */
+.accordion-item {
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+.accordion-header {
+    background: var(--c-parchment-bg);
+    padding: 1.15rem 1.4rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--c-burgundy-dark);
+    transition: var(--transition);
+    border-bottom: 1px solid transparent;
+}
+.accordion-header:hover { background: #FFFFFF; }
+.accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+    background: #FFFFFF;
+}
+.accordion-item.open .accordion-body {
+    max-height: 1500px;
+}
+.accordion-item.open .accordion-header {
+    border-bottom-color: var(--c-border);
+    background: #FFFFFF;
+}
+.accordion-item.open .accordion-header .icon {
+    transform: rotate(180deg);
+}
+
+.lesson-item {
+    padding: 1rem 1.4rem;
+    border-top: 1px solid var(--c-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    transition: var(--transition);
+}
+.lesson-item:hover { background: var(--c-parchment-bg); }
+
+/* Sidebar */
+.enroll-sidebar {
+    background: #FFFFFF;
+    border-radius: var(--radius-sm);
+    padding: 2rem;
+    box-shadow: var(--shadow-classic);
+    position: sticky;
+    top: 95px;
+    border: 1px solid var(--c-border);
+    outline: 1px solid var(--c-gold);
+    outline-offset: -6px;
+}
+
+.enroll-price {
+    font-family: var(--font-classic);
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: var(--c-burgundy);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.enroll-features {
+    margin: 1.75rem 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px dashed var(--c-border);
+}
+.enroll-features li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.95rem;
+    color: var(--c-text-muted);
+    font-size: 0.94rem;
+    font-weight: 600;
+}
+
+/* Star Rating Input */
+.star-rating-input {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    gap: 0.35rem;
+}
+.star-rating-input input { display: none; }
+.star-rating-input label {
+    font-size: 2rem;
+    color: var(--c-border);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.star-rating-input input:checked ~ label,
+.star-rating-input label:hover,
+.star-rating-input label:hover ~ label {
+    color: var(--c-gold);
+}
+
+.review-card {
+    padding: 1.35rem;
+    border-radius: var(--radius-sm);
+    background: var(--c-parchment-bg);
+    border: 1px solid var(--c-border);
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="course-detail-header">
+    <div class="container">
+        <div class="header-content">
+            <span class="course-badge-large">{{ course.category.name|default:"عام" }}</span>
+            {% if course.status != 'published' %}
+            <span style="background: rgba(184, 95, 24, 0.2); border: 1px solid var(--c-amber); color: var(--c-gold-light); padding: 0.35rem 1rem; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 700; margin-right: 0.5rem;">مسودة قيد المراجعة</span>
+            {% endif %}
+            <h1 style="font-family: var(--font-heading); font-size: clamp(2.2rem, 4.5vw, 3.2rem); font-weight: 700; margin-bottom: 1.25rem; line-height: 1.3; color: #FFFFFF;">
+                {{ course.title }}
+            </h1>
+            <p style="font-family: var(--font-heading); font-size: 1.25rem; color: #D9CBB7; margin-bottom: 2rem; line-height: 1.8;">
+                {{ course.description|truncatewords:35 }}
+            </p>
+            
+            <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap; font-size: 0.95rem; font-weight: 700; border-top: 1px solid rgba(194, 155, 83, 0.3); padding-top: 1.5rem;">
+                <span style="display: flex; align-items: center; gap: 0.4rem; color: var(--c-gold-light);">
+                    <span class="material-icons-round" style="color: var(--c-gold);">star</span>
+                    <strong id="header-avg-rating" style="font-family: var(--font-classic); font-size: 1.15rem;">{{ course.average_rating|default:"4.9" }}</strong>
+                    (<span id="header-reviews-count">{{ course.reviews_count }}</span> تزكية وتقييم)
+                </span>
+                <span style="display: flex; align-items: center; gap: 0.4rem; color: #E6D8CC;">
+                    <span class="material-icons-round" style="color: var(--c-gold);">group</span>
+                    {{ course.students_count|default:course.enrollments.count }} طالب علم مقيد
+                </span>
+                <span style="display: flex; align-items: center; gap: 0.4rem; color: #E6D8CC;">
+                    <span class="material-icons-round" style="color: var(--c-gold);">translate</span>
+                    لسان الشرح: {{ course.language }}
+                </span>
+                <span style="display: flex; align-items: center; gap: 0.4rem; color: #E6D8CC;">
+                    <span class="material-icons-round" style="color: var(--c-gold);">stairs</span>
+                    {{ course.get_level_display }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="detail-layout">
+    <!-- Main Content -->
+    <div class="course-main">
+        <!-- Course Description -->
+        <div class="content-box">
+            <h2>
+                <span class="material-icons-round">menu_book</span>
+                بيان المساق ومقاصده التعليمية
+            </h2>
+            <div style="color: var(--c-text-main); line-height: 1.9; font-size: 1.05rem; font-family: var(--font-body);">
+                {{ course.description|linebreaks }}
+            </div>
+        </div>
+        
+        <!-- Course Curriculum -->
+        <div class="content-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.4rem; padding-bottom: 0.9rem; border-bottom: 1px dashed var(--c-border); flex-wrap: wrap; gap: 0.5rem;">
+                <h2 style="margin: 0; padding: 0; border: none;">
+                    <span class="material-icons-round">history_edu</span>
+                    فهرس المنهج والوحدات الدراسية
+                </h2>
+                <span style="color: var(--c-gold-dark); font-size: 0.92rem; font-weight: 700; font-family: var(--font-heading);">
+                    {{ course.sections.count }} أبواب • {{ course.total_lessons_count }} درساً • مجموع المدة: {{ course.total_duration_display }}
+                </span>
+            </div>
+            
+            {% for section in course.sections.all %}
+            <div class="accordion-item {% if forloop.first %}open{% endif %}">
+                <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <span class="material-icons-round" style="color: var(--c-burgundy); font-size: 1.35rem;">folder</span>
+                        <span>{{ section.title }}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span style="font-size: 0.88rem; color: var(--c-gold-dark); font-weight: 700; font-family: var(--font-heading);">{{ section.lessons.count }} دروس</span>
+                        <span class="material-icons-round icon" style="transition: transform 0.3s; color: var(--c-gold);">expand_more</span>
+                    </div>
+                </div>
+                <div class="accordion-body">
+                    {% for lesson in section.lessons.all %}
+                    <div class="lesson-item">
+                        <div style="display: flex; align-items: center; gap: 0.85rem;">
+                            <span class="material-icons-round" style="color: {% if is_enrolled or lesson.is_preview or user == course.instructor or user.is_superuser %}var(--c-burgundy){% else %}var(--c-border){% endif %};">
+                                {% if is_enrolled or lesson.is_preview or user == course.instructor or user.is_superuser %}play_circle_filled{% else %}lock{% endif %}
+                            </span>
+                            {% if is_enrolled or lesson.is_preview or user == course.instructor or user.is_superuser %}
+                                <a href="{% url 'courses:player' course.slug lesson.slug %}" style="font-weight: 700; color: var(--c-text-main); font-family: var(--font-heading); font-size: 1.15rem;">{{ lesson.title }}</a>
+                            {% else %}
+                                <span style="color: var(--c-text-muted); font-weight: 600; font-family: var(--font-heading); font-size: 1.15rem;">{{ lesson.title }}</span>
+                            {% endif %}
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.85rem;">
+                            {% if lesson.is_preview %}
+                            <a href="{% url 'courses:player' course.slug lesson.slug %}" style="background: rgba(27, 94, 75, 0.1); border: 1px solid var(--c-emerald); color: var(--c-emerald); padding: 0.2rem 0.75rem; border-radius: var(--radius-sm); font-size: 0.78rem; font-weight: 800;">معاينة مجانية</a>
+                            {% endif %}
+                            <span style="color: var(--c-text-muted); font-size: 0.88rem; font-family: var(--font-classic);" dir="ltr">{{ lesson.duration_formatted }}</span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="lesson-item" style="color: var(--c-text-muted);">لا توجد دروس مقيدة في هذا الباب بعد.</div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% empty %}
+            <p style="color: var(--c-text-muted); text-align: center; padding: 2rem; font-family: var(--font-heading); font-size: 1.1rem;">لم يُقيد منهج لهذا المساق بعد.</p>
+            {% endfor %}
+        </div>
+        
+        <!-- Instructor Credentials -->
+        <div class="content-box">
+            <h2>
+                <span class="material-icons-round">badge</span>
+                مدرس المساق والمشرف العلمي
+            </h2>
+            <div style="display: flex; gap: 1.8rem; align-items: flex-start; flex-wrap: wrap;">
+                <a href="{% url 'accounts:profile' course.instructor.username %}">
+                    {% if course.instructor.avatar %}
+                        <img src="{{ course.instructor.avatar.url }}" alt="{{ course.instructor.display_name }}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid var(--c-gold); box-shadow: 0 4px 12px rgba(58, 7, 16, 0.15);">
+                    {% else %}
+                        <div style="width: 100px; height: 100px; border-radius: 50%; background: var(--c-burgundy); color: var(--c-gold-light); display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 2.6rem; font-weight: 700; border: 2px solid var(--c-gold);">
+                            {{ course.instructor.display_name|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                </a>
+                <div style="flex: 1; min-width: 240px;">
+                    <h3 style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; margin-bottom: 0.25rem;">
+                        <a href="{% url 'accounts:profile' course.instructor.username %}" style="color: var(--c-burgundy-dark);">{{ course.instructor.display_name }}</a>
+                    </h3>
+                    <p style="color: var(--c-gold-dark); font-weight: 700; font-size: 0.98rem; margin-bottom: 0.75rem; font-family: var(--font-heading);">
+                        {{ course.instructor.instructor_profile.title|default:"أستاذ معتمد في منصة ارتقاء الأكاديمية" }}
+                    </p>
+                    <p style="color: var(--c-text-muted); line-height: 1.8; font-size: 0.98rem;">
+                        {{ course.instructor.bio|default:"عالم وباحث متخصص في تقديم المناهج التدريبية والتأهيلية وإرشاد طلاب العلم." }}
+                    </p>
+                    <a href="{% url 'accounts:profile' course.instructor.username %}" class="btn btn-outline" style="margin-top: 1rem; padding: 0.4rem 1.2rem; font-size: 0.85rem;">
+                        طالع صحيفة الأستاذ ومؤلفاته
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews & Ratings -->
+        <div class="content-box" id="reviews-section">
+            <h2>
+                <span class="material-icons-round">rate_review</span>
+                تزكيات وتقييمات الدارسين
+            </h2>
+            
+            {% if is_enrolled %}
+            <div style="background: var(--c-parchment-bg); border: 1px solid var(--c-border); outline: 1px solid var(--c-gold-soft); outline-offset: -4px; border-radius: var(--radius-sm); padding: 1.75rem; margin-bottom: 2rem;">
+                <h3 style="font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--c-burgundy);">
+                    {% if user_review %}تحديث تزكيتك للمساق{% else %}أضف تزكيتك وتقييمك الأكاديمي{% endif %}
+                </h3>
+                <form id="review-form" onsubmit="submitReview(event)">
+                    <div style="margin-bottom: 1rem;">
+                        <div class="star-rating-input">
+                            <input type="radio" id="star5" name="rating" value="5" {% if not user_review or user_review.rating == 5 %}checked{% endif %}><label for="star5" title="5 نجوم">★</label>
+                            <input type="radio" id="star4" name="rating" value="4" {% if user_review.rating == 4 %}checked{% endif %}><label for="star4" title="4 نجوم">★</label>
+                            <input type="radio" id="star3" name="rating" value="3" {% if user_review.rating == 3 %}checked{% endif %}><label for="star3" title="3 نجوم">★</label>
+                            <input type="radio" id="star2" name="rating" value="2" {% if user_review.rating == 2 %}checked{% endif %}><label for="star2" title="نجمتان">★</label>
+                            <input type="radio" id="star1" name="rating" value="1" {% if user_review.rating == 1 %}checked{% endif %}><label for="star1" title="نجمة واحدة">★</label>
+                        </div>
+                    </div>
+                    <textarea id="review-comment" rows="3" placeholder="سجل انطباعك العلمي وتجربتك مع هذا المساق..." style="width: 100%; padding: 0.85rem 1rem; border-radius: var(--radius-sm); border: 1.5px solid var(--c-border); font-family: var(--font-body); font-size: 0.95rem; margin-bottom: 1rem; outline: none; background: #FFFFFF;" required>{{ user_review.comment|default:'' }}</textarea>
+                    <button type="submit" class="btn btn-primary" id="review-submit-btn">
+                        <span class="material-icons-round" style="font-size: 1.1rem; color: var(--c-gold-light);">send</span>
+                        {% if user_review %}حفظ التزكية المحدثة{% else %}إيداع التزكية في السجل{% endif %}
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+
+            <div id="reviews-list">
+                {% for rev in reviews %}
+                <div class="review-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 42px; height: 42px; border-radius: 50%; background: var(--c-burgundy); color: var(--c-gold-light); display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; border: 1px solid var(--c-gold);">
+                                {{ rev.student.display_name|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <h4 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--c-burgundy-dark);">{{ rev.student.display_name }}</h4>
+                                <span style="font-size: 0.78rem; color: var(--c-text-muted); font-family: var(--font-classic);">{{ rev.created_at|date:"Y-m-d" }}</span>
+                            </div>
+                        </div>
+                        <div style="color: var(--c-gold); font-size: 1.15rem; letter-spacing: 2px;">
+                            {% for i in "12345" %}{% if forloop.counter <= rev.rating %}★{% else %}☆{% endif %}{% endfor %}
+                        </div>
+                    </div>
+                    <p style="color: var(--c-text-main); font-size: 0.98rem; margin-top: 0.65rem; font-family: var(--font-heading); line-height: 1.7;">«{{ rev.comment }}»</p>
+                </div>
+                {% empty %}
+                <p id="no-reviews-msg" style="color: var(--c-text-muted); text-align: center; padding: 2rem; font-family: var(--font-heading); font-size: 1.1rem;">لم تُقيد تزكيات بعد. كن أول من يودع تقييمه لهذا المساق.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Classical Ledger Sidebar -->
+    <aside class="enroll-sidebar">
+        {% if course.thumbnail %}
+            <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" style="width: 100%; height: 210px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--c-border); margin-bottom: 1.5rem;">
+        {% else %}
+            <div style="width: 100%; height: 200px; border-radius: var(--radius-sm); background: linear-gradient(135deg, var(--c-burgundy-dark), var(--c-burgundy)); margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; color: var(--c-gold-light); border: 1px solid var(--c-gold);">
+                <span class="material-icons-round" style="font-size: 4.5rem; opacity: 0.9;">auto_stories</span>
+            </div>
+        {% endif %}
+        
+        <div class="enroll-price">
+            {% if course.effective_price > 0 %}
+                <span>${{ course.effective_price }}</span>
+                {% if course.has_discount %}
+                    <span class="course-old-price" style="font-size: 1.25rem;">${{ course.price }}</span>
+                {% endif %}
+            {% else %}
+                <span style="color: var(--c-emerald); font-family: var(--font-heading); font-size: 2rem;">مَجَّانِيٌّ كَامِلًا</span>
+            {% endif %}
+        </div>
+        
+        {% if is_enrolled %}
+            {% if first_lesson %}
+                <a href="{% url 'courses:player' course.slug first_lesson.slug %}" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 0.95rem; margin-bottom: 0.75rem;">
+                    <span class="material-icons-round">play_circle</span>
+                    متابعة الدرس وقاعة المحاضرات
+                </a>
+            {% else %}
+                <a href="{% url 'enrollments:my_courses' %}" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 0.95rem; margin-bottom: 0.75rem;">
+                    الذهاب إلى ديوان مساقاتي
+                </a>
+            {% endif %}
+            {% if enrollment.is_completed and enrollment.certificate %}
+                <a href="{% url 'enrollments:certificate' enrollment.certificate.certificate_id %}" class="btn btn-gold" style="width: 100%; font-size: 1rem; padding: 0.85rem;">
+                    <span class="material-icons-round">workspace_premium</span>
+                    معاينة شهادة الإتمام المعتمدة
+                </a>
+            {% endif %}
+        {% else %}
+            {% if user.is_authenticated %}
+                <form action="{% url 'enrollments:enroll' course.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.15rem; padding: 0.95rem; background: var(--c-burgundy);">
+                        <span class="material-icons-round" style="color: var(--c-gold-light);">school</span>
+                        {% if course.effective_price > 0 %}قيد الاشتراك بالمساق الآن{% else %}الالتحاق بالمساق مجاناً{% endif %}
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary" style="width: 100%; font-size: 1.15rem; padding: 0.95rem;">
+                    <span class="material-icons-round" style="color: var(--c-gold-light);">login</span>
+                    تسجيل الدخول للقيد بالمساق
+                </a>
+            {% endif %}
+        {% endif %}
+
+        {% if user.is_authenticated and user == course.instructor or user.is_superuser %}
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--c-border); display: flex; gap: 0.5rem;">
+                <a href="{% url 'courses:manage_content' course.slug %}" class="btn btn-outline" style="flex: 1; font-size: 0.85rem; padding: 0.5rem;">إدارة الأبواب والدروس</a>
+                <a href="{% url 'courses:edit' course.slug %}" class="btn btn-outline" style="flex: 1; font-size: 0.85rem; padding: 0.5rem;">تعديل البيانات</a>
+            </div>
+        {% endif %}
+        
+        <ul class="enroll-features">
+            <li><span class="material-icons-round" style="color: var(--c-burgundy);">play_lesson</span> {{ course.total_lessons_count }} دروس تفصيلية عالية الدقة</li>
+            <li><span class="material-icons-round" style="color: var(--c-burgundy);">timer</span> مجموع المدة التعليمية: {{ course.total_duration_display }}</li>
+            <li><span class="material-icons-round" style="color: var(--c-burgundy);">all_inclusive</span> صلاحية انتساب دائمة مدى الحياة</li>
+            <li><span class="material-icons-round" style="color: var(--c-burgundy);">devices</span> سهولة المطالعة من الحاسوب والهاتف</li>
+            <li><span class="material-icons-round" style="color: var(--c-gold-dark);">workspace_premium</span> صك وشهادة إتمام معتمدة فور إكمال المنهج</li>
+        </ul>
+    </aside>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function submitReview(e) {
+    e.preventDefault();
+    const ratingEl = document.querySelector('input[name="rating"]:checked');
+    const rating = ratingEl ? parseInt(ratingEl.value) : 5;
+    const comment = document.getElementById('review-comment').value.trim();
+    const btn = document.getElementById('review-submit-btn');
+
+    if (!comment) return;
+    btn.disabled = true;
+
+    fetch("{% url 'reviews:create' course.id %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ rating, comment })
+    })
+    .then(r => r.json())
+    .then(data => {
+        btn.disabled = false;
+        if (data.success) {
+            showToast(data.message, 'success');
+            document.getElementById('header-avg-rating').innerText = data.avg_rating;
+            document.getElementById('header-reviews-count').innerText = data.reviews_count;
+            setTimeout(() => window.location.reload(), 900);
+        } else {
+            showToast(data.error || 'حدث خطأ أثناء حفظ التقييم', 'error');
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        showToast('تعذر الاتصال بالخادم', 'error');
+    });
+}
+</script>
+{% endblock %}

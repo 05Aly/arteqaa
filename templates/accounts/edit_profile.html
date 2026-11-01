@@ -1,0 +1,94 @@
+<!-- templates/accounts/edit_profile.html -->
+{% extends 'base.html' %}
+{% block title %}تعديل السجل الشخصي - ارتقاء الأكاديمية{% endblock %}
+
+{% block extra_css %}
+<style>
+.form-page { padding: 3.5rem 5%; max-width: 880px; margin: 0 auto; }
+.form-card {
+    background: #FFFFFF; border-radius: var(--radius-sm); padding: 2.75rem 2.5rem;
+    box-shadow: var(--shadow-classic); border: 1px solid var(--c-border);
+    outline: 1px solid var(--c-gold-soft); outline-offset: -6px;
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 700px) { .form-grid { grid-template-columns: 1fr; } }
+.form-group.full { grid-column: 1 / -1; }
+.form-label {
+    display: block; margin-bottom: 0.45rem; font-family: var(--font-heading);
+    font-weight: 700; color: var(--c-burgundy-dark); font-size: 1.1rem;
+}
+.form-control {
+    width: 100%; padding: 0.8rem 1rem; border: 1.5px solid var(--c-border);
+    border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 0.95rem;
+    background: var(--c-parchment-bg); transition: var(--transition);
+}
+.form-control:focus {
+    outline: none; border-color: var(--c-gold); background: #FFFFFF;
+    box-shadow: 0 0 0 3px var(--c-gold-soft);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div style="margin-bottom: 2rem; border-bottom: 2px solid var(--c-gold); padding-bottom: 1.25rem;">
+        <div style="font-family: var(--font-heading); color: var(--c-gold-dark); font-size: 1.05rem;">❖ سِجِلُّ البَيَانَاتِ الأَكَادِيمِيَّةِ ❖</div>
+        <h1 style="font-family: var(--font-heading); font-size: 2.3rem; font-weight: 700; color: var(--c-burgundy-dark); margin: 0.35rem 0;">تعديل السجل والملف الشخصي</h1>
+        <p style="color: var(--c-text-muted); font-family: var(--font-heading); font-size: 1.1rem;">حدث بياناتك الأكاديمية وترجمتك وصورتك وروابط الاتصال</p>
+    </div>
+
+    <div class="form-card">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">الاسم الأول</label>
+                    <input type="text" name="first_name" value="{{ user.first_name }}" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">الاسم الأخير (العائلة / اللقب)</label>
+                    <input type="text" name="last_name" value="{{ user.last_name }}" class="form-control">
+                </div>
+
+                {% if instructor_profile %}
+                <div class="form-group">
+                    <label class="form-label">الرتبة والمسمى العلمي (يظهر لطلابك)</label>
+                    <input type="text" name="title" value="{{ instructor_profile.title }}" class="form-control" placeholder="مثال: أستاذ علوم الحاسب والذكاء الاصطناعي">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ميادين التخصص العلمي</label>
+                    <input type="text" name="expertise" value="{{ instructor_profile.expertise }}" class="form-control" placeholder="Python, Django, Machine Learning, UI/UX">
+                </div>
+                {% endif %}
+
+                <div class="form-group full">
+                    <label class="form-label">السيرة الذاتية والنبذة التعريفية</label>
+                    <textarea name="bio" rows="4" class="form-control" placeholder="اكتب نبذة موجزة عن تحصيلك العلمي وخبراتك وتخصصاتك...">{{ user.bio }}</textarea>
+                </div>
+
+                <div class="form-group full">
+                    <label class="form-label">الصورة الشخصية الرسمية</label>
+                    <input type="file" name="avatar" accept="image/*" class="form-control" style="padding: 0.5rem 1rem;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">رابط LinkedIn</label>
+                    <input type="url" name="social_linkedin" value="{{ user.social_links.linkedin|default:'' }}" class="form-control" placeholder="https://linkedin.com/in/...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">رابط GitHub / الصفحة الشخصية</label>
+                    <input type="url" name="social_github" value="{{ user.social_links.github|default:'' }}" class="form-control" placeholder="https://github.com/...">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2.5rem; border-top: 1px dashed var(--c-border); padding-top: 1.5rem;">
+                <a href="{% if user.role == 'instructor' %}{% url 'accounts:instructor_dashboard' %}{% else %}{% url 'accounts:student_dashboard' %}{% endif %}" class="btn btn-outline">إلغاء الأمر</a>
+                <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
+                    <span class="material-icons-round" style="font-size: 1.15rem; color: var(--c-gold-light);">save</span>
+                    حفظ وتحديث السجل
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,276 @@
+<!-- templates/accounts/student_dashboard.html -->
+{% extends 'base.html' %}
+{% block title %}سِجِلُّ الطَّالِبِ - ارتقاء الأكاديمية{% endblock %}
+
+{% block extra_css %}
+<style>
+.dashboard-banner {
+    background: linear-gradient(135deg, #4A0C16 0%, #2D050D 100%);
+    padding: 3.5rem 5%;
+    color: #FAF6EE;
+    border-bottom: 2px solid var(--c-gold);
+}
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 2.5rem;
+    padding: 3.5rem 5%;
+    max-width: 1380px;
+    margin: 0 auto;
+    align-items: start;
+}
+@media (max-width: 960px) {
+    .dashboard-layout { grid-template-columns: 1fr; }
+}
+
+/* Classical Student Folio Card */
+.profile-card {
+    background: #FFFFFF;
+    border-radius: var(--radius-sm);
+    padding: 2.2rem 1.8rem;
+    box-shadow: var(--shadow-classic);
+    text-align: center;
+    border: 1px solid var(--c-border);
+    outline: 1px solid var(--c-gold-soft);
+    outline-offset: -5px;
+    position: sticky;
+    top: 95px;
+}
+.profile-avatar {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    margin: 0 auto 1.25rem;
+    background: var(--c-burgundy);
+    color: var(--c-gold-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 2.8rem;
+    font-weight: 700;
+    object-fit: cover;
+    border: 2px solid var(--c-gold);
+    box-shadow: 0 4px 12px rgba(58, 7, 16, 0.2);
+}
+.profile-name {
+    font-family: var(--font-heading);
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--c-burgundy-dark);
+    margin-bottom: 0.25rem;
+}
+.profile-role {
+    display: inline-block;
+    background: var(--c-gold-soft);
+    color: var(--c-gold-dark);
+    border: 1px solid rgba(194, 155, 83, 0.3);
+    padding: 0.2rem 0.9rem;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.85rem;
+    font-family: var(--font-heading);
+    margin-bottom: 1.5rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+.stat-box {
+    background: var(--c-parchment-bg);
+    padding: 1rem 0.75rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--c-border);
+    text-align: center;
+}
+.stat-num {
+    font-family: var(--font-classic);
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--c-burgundy);
+    line-height: 1.2;
+}
+.stat-label {
+    color: var(--c-text-muted);
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+}
+
+.enrolled-courses {
+    display: grid;
+    gap: 1.35rem;
+}
+.enrolled-card {
+    background: #FFFFFF;
+    border-radius: var(--radius-sm);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-classic);
+    border: 1px solid var(--c-border);
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    transition: var(--transition);
+    flex-wrap: wrap;
+    position: relative;
+}
+.enrolled-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--c-gold);
+}
+.e-card-img {
+    width: 175px;
+    height: 115px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    background: linear-gradient(135deg, var(--c-burgundy-dark), var(--c-burgundy));
+    border: 1px solid var(--c-gold-dark);
+    flex-shrink: 0;
+}
+.e-card-body { flex: 1; min-width: 220px; }
+.e-card-title {
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+    color: var(--c-burgundy-dark);
+}
+.progress-wrapper { margin-top: 0.85rem; max-width: 440px; }
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--c-text-muted);
+    margin-bottom: 0.35rem;
+    font-family: var(--font-heading);
+}
+.progress-bg {
+    height: 8px;
+    background: var(--c-parchment-bg);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--c-border);
+}
+.progress-fill {
+    height: 100%;
+    background: var(--c-gold-gradient);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-banner">
+    <div class="container">
+        <div style="font-family: var(--font-heading); color: var(--c-gold-light); font-size: 1.05rem; margin-bottom: 0.25rem;">❖ صَحِيفَةُ الطَّالِبِ المُنْتَسِبِ ❖</div>
+        <h1 style="font-family: var(--font-heading); font-size: 2.6rem; font-weight: 700; margin-bottom: 0.4rem;">سجل المساقات والتحصيل العلمي</h1>
+        <p style="color: #D3C3B5; font-size: 1.15rem; font-family: var(--font-heading);">
+            مرحباً بك يا {{ user.display_name }}، تابع دراستك في قاعات المحاضرات واستلم شهادات الإتقان المعتمدة
+        </p>
+    </div>
+</div>
+
+<div class="dashboard-layout">
+    <aside>
+        <div class="profile-card">
+            {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" alt="{{ user.display_name }}" class="profile-avatar">
+            {% else %}
+            <div class="profile-avatar">{{ user.display_name|slice:":1"|upper }}</div>
+            {% endif %}
+            
+            <h2 class="profile-name">{{ user.display_name }}</h2>
+            <div class="profile-role">طالب علم بالأكاديمية</div>
+            
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-num">{{ enrollments.count }}</div>
+                    <div class="stat-label">المساقات المقيد بها</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-num" style="color: var(--c-emerald);">{{ completed_count }}</div>
+                    <div class="stat-label">مساقات أُتمت بنجاح</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+                <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline" style="width: 100%;">
+                    <span class="material-icons-round" style="font-size: 1.1rem;">edit</span>
+                    تعديل السجل الشخصي
+                </a>
+                <a href="{% url 'accounts:profile' user.username %}" class="btn btn-outline" style="width: 100%; border-color: var(--c-border); color: var(--c-text-muted);">
+                    مطالعة صحيفتي العامة
+                </a>
+            </div>
+        </div>
+    </aside>
+    
+    <main>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <h2 style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 700; color: var(--c-burgundy-dark);">المساقات المقيد بها حالياً</h2>
+            <a href="{% url 'courses:list' %}" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.5rem 1.4rem;">
+                <span class="material-icons-round" style="font-size: 1.1rem; color: var(--c-gold-light);">add</span>
+                القيد بمساقات جديدة
+            </a>
+        </div>
+        
+        <div class="enrolled-courses">
+            {% for enrollment in enrollments %}
+            <div class="enrolled-card">
+                {% if enrollment.course.thumbnail %}
+                <img src="{{ enrollment.course.thumbnail.url }}" alt="{{ enrollment.course.title }}" class="e-card-img">
+                {% else %}
+                <div class="e-card-img" style="display: flex; align-items: center; justify-content: center; color: var(--c-gold-light);">
+                    <span class="material-icons-round" style="font-size: 3rem;">auto_stories</span>
+                </div>
+                {% endif %}
+                
+                <div class="e-card-body">
+                    <span class="course-badge" style="margin-bottom: 0.4rem;">{{ enrollment.course.category.name|default:"عام" }}</span>
+                    <h3 class="e-card-title">
+                        <a href="{% url 'courses:detail' enrollment.course.slug %}">{{ enrollment.course.title }}</a>
+                    </h3>
+                    <p style="color: var(--c-text-muted); font-size: 0.88rem; font-family: var(--font-heading);">
+                        أستاذ المساق: {{ enrollment.course.instructor.display_name }}
+                    </p>
+                    
+                    <div class="progress-wrapper">
+                        <div class="progress-header">
+                            <span>نسبة التحصيل والإنجاز</span>
+                            <span style="font-family: var(--font-classic); color: var(--c-burgundy);">{{ enrollment.progress_percent }}%</span>
+                        </div>
+                        <div class="progress-bg">
+                            <div class="progress-fill" style="width: {{ enrollment.progress_percent }}%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 0.6rem; min-width: 170px;">
+                    <a href="{% url 'courses:detail' enrollment.course.slug %}" class="btn btn-primary" style="width: 100%; font-size: 0.92rem;">
+                        <span class="material-icons-round" style="font-size: 1.1rem; color: var(--c-gold-light);">play_circle</span>
+                        متابعة الدراسة
+                    </a>
+                    {% if enrollment.is_completed and enrollment.certificate %}
+                    <a href="{% url 'enrollments:certificate' enrollment.certificate.certificate_id %}" class="btn btn-gold" style="width: 100%; font-size: 0.88rem;">
+                        <span class="material-icons-round" style="font-size: 1.1rem;">workspace_premium</span>
+                        معاينة الصك والشهادة
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div style="text-align: center; padding: 4.5rem 2rem; background: #FFFFFF; border-radius: var(--radius-sm); border: 1px solid var(--c-border); outline: 1px solid var(--c-gold-soft); outline-offset: -6px;">
+                <span class="material-icons-round" style="font-size: 4rem; color: var(--c-gold); margin-bottom: 1rem;">menu_book</span>
+                <h3 style="font-family: var(--font-heading); font-size: 1.7rem; margin-bottom: 0.5rem; color: var(--c-burgundy-dark);">لم تقيد في أي مساق دراسي بعد</h3>
+                <p style="color: var(--c-text-muted); margin-bottom: 1.5rem; font-family: var(--font-heading); font-size: 1.1rem;">تصفح ديوان الكورسات المتاحة واختر مساقك للبدء فوراً في طلب العلم!</p>
+                <a href="{% url 'courses:list' %}" class="btn btn-primary">تصفح ديوان الكورسات</a>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+{% endblock %}

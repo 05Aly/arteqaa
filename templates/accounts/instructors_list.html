@@ -1,0 +1,113 @@
+<!-- templates/accounts/instructors_list.html -->
+{% extends 'base.html' %}
+{% block title %}ديوان الأساتذة وهيئة التدريس - ارتقاء الأكاديمية{% endblock %}
+
+{% block extra_css %}
+<style>
+.page-header {
+    background: linear-gradient(135deg, #4A0C16 0%, #2D050D 100%);
+    color: #FAF6EE;
+    padding: 4.5rem 5% 4rem;
+    text-align: center;
+    border-bottom: 2px solid var(--c-gold);
+}
+.page-header h1 {
+    font-family: var(--font-heading);
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--c-gold-light);
+    margin-bottom: 0.5rem;
+}
+.page-header p {
+    font-family: var(--font-heading);
+    color: #D3C3B5;
+    font-size: 1.2rem;
+}
+
+.inst-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 4rem 5%;
+    max-width: 1320px;
+    margin: 0 auto;
+}
+.inst-card {
+    background: #FFFFFF;
+    border-radius: var(--radius-sm);
+    padding: 2.2rem 1.8rem;
+    text-align: center;
+    box-shadow: var(--shadow-classic);
+    border: 1px solid var(--c-border);
+    outline: 1px solid var(--c-gold-soft);
+    outline-offset: -5px;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.inst-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--c-gold);
+}
+.inst-avatar {
+    width: 105px;
+    height: 105px;
+    border-radius: 50%;
+    background: var(--c-burgundy);
+    color: var(--c-gold-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 2.6rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    object-fit: cover;
+    border: 2px solid var(--c-gold);
+    box-shadow: 0 4px 14px rgba(58, 7, 16, 0.2);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div style="font-family: var(--font-heading); color: var(--c-gold); font-size: 1.1rem; margin-bottom: 0.4rem;">❖ هَيْئَةُ التَّدْرِيسِ وَأَهْلُ الفَضْلِ ❖</div>
+    <h1>ديوان الأساتذة والعلماء</h1>
+    <p>تتلمذ على أيدي نخبة من كبار الأساتذة والباحثين المعتمدين في صرح ارتقاء</p>
+</div>
+
+<div class="inst-grid">
+    {% for inst in instructors %}
+    <div class="inst-card">
+        {% if inst.avatar %}
+            <img src="{{ inst.avatar.url }}" alt="{{ inst.display_name }}" class="inst-avatar">
+        {% else %}
+            <div class="inst-avatar">{{ inst.display_name|slice:":1"|upper }}</div>
+        {% endif %}
+        
+        <h3 style="font-family: var(--font-heading); font-size: 1.55rem; font-weight: 700; margin-bottom: 0.25rem; color: var(--c-burgundy-dark);">{{ inst.display_name }}</h3>
+        <p style="color: var(--c-gold-dark); font-weight: 700; font-size: 0.95rem; margin-bottom: 0.85rem; font-family: var(--font-heading);">
+            {{ inst.instructor_profile.title|default:"أستاذ معتمد في المنصة" }}
+        </p>
+        <p style="color: var(--c-text-muted); font-size: 0.92rem; margin-bottom: 1.5rem; line-height: 1.7; font-family: var(--font-body);">
+            {{ inst.bio|truncatewords:18|default:"أستاذ ومحاضر متخصص يُعنى بتأصيل المعارف وبناء المناهج العلمية والعملية." }}
+        </p>
+        
+        <div style="display: flex; gap: 1.5rem; justify-content: center; width: 100%; padding: 0.85rem 0; border-top: 1px dashed var(--c-border); border-bottom: 1px dashed var(--c-border); margin-top: auto; margin-bottom: 1.25rem; font-size: 0.9rem; font-weight: 700; color: var(--c-text-muted); font-family: var(--font-heading);">
+            <span><strong style="color: var(--c-burgundy); font-family: var(--font-classic);">{{ inst.published_courses_count }}</strong> مساقات</span>
+            <span><strong style="color: var(--c-burgundy); font-family: var(--font-classic);">{{ inst.students_total }}</strong> دارساً</span>
+            <span><strong style="color: var(--c-gold);">{{ inst.avg_course_rating|default:"4.9"|floatformat:1 }} ★</strong></span>
+        </div>
+        <a href="{% url 'accounts:profile' inst.username %}" class="btn btn-outline" style="width: 100%;">
+            طالع صحيفة الأستاذ
+        </a>
+    </div>
+    {% empty %}
+    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; background: #FFFFFF; border-radius: var(--radius-sm); border: 1px solid var(--c-border);">
+        <p style="color: var(--c-text-muted); font-family: var(--font-heading); font-size: 1.2rem;">لا يوجد أساتذة مسجلون حالياً في السجل.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,185 @@
+<!-- templates/accounts/profile.html -->
+{% extends 'base.html' %}
+{% block title %}{{ profile_user.display_name }} - الصَّحِيفَةُ الأَكَادِيمِيَّةُ | ارتقاء{% endblock %}
+
+{% block extra_css %}
+<style>
+.profile-header {
+    background: linear-gradient(135deg, #4A0C16 0%, #2D050D 100%);
+    color: #FAF6EE;
+    padding: 4.5rem 5% 4rem;
+    position: relative;
+    border-bottom: 2px solid var(--c-gold);
+}
+.profile-header-inner {
+    position: relative;
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+    max-width: 1180px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+.profile-pic {
+    width: 140px; height: 140px; border-radius: 50%;
+    border: 3px solid var(--c-gold);
+    box-shadow: 0 4px 16px rgba(58, 7, 16, 0.3);
+    object-fit: cover;
+    background: var(--c-burgundy);
+    color: var(--c-gold-light);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 3.8rem; font-weight: 700; flex-shrink: 0;
+}
+.profile-meta h1 {
+    font-family: var(--font-heading);
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin-bottom: 0.35rem;
+}
+.profile-meta .role-badge {
+    background: rgba(194, 155, 83, 0.15);
+    border: 1px solid var(--c-gold);
+    color: var(--c-gold-light);
+    padding: 0.25rem 0.95rem; border-radius: var(--radius-sm); font-size: 0.88rem; font-weight: 700;
+    font-family: var(--font-heading);
+    display: inline-block; margin-bottom: 0.85rem;
+}
+.profile-stats { display: flex; gap: 2.5rem; margin-top: 1.5rem; }
+.profile-stat h3 {
+    font-family: var(--font-classic);
+    font-size: 2rem; font-weight: 800; color: var(--c-gold-light); line-height: 1.1;
+}
+.profile-stat p { font-size: 0.95rem; color: #D3C3B5; font-weight: 700; font-family: var(--font-heading); margin-top: 0.2rem; }
+
+.profile-body { max-width: 1180px; margin: 3.5rem auto; padding: 0 5%; }
+.profile-grid { display: grid; grid-template-columns: 320px 1fr; gap: 2.5rem; align-items: start; }
+@media (max-width: 900px) { .profile-grid { grid-template-columns: 1fr; } }
+
+.info-card {
+    background: #FFFFFF; border-radius: var(--radius-sm); padding: 1.8rem;
+    box-shadow: var(--shadow-classic); border: 1px solid var(--c-border);
+    outline: 1px solid var(--c-gold-soft); outline-offset: -5px;
+    margin-bottom: 1.5rem;
+}
+.info-card h3 {
+    font-family: var(--font-heading);
+    font-size: 1.35rem; font-weight: 700; color: var(--c-burgundy-dark);
+    margin-bottom: 1.1rem; padding-bottom: 0.6rem; border-bottom: 1px dashed var(--c-border);
+}
+.info-item { display: flex; align-items: center; gap: 0.75rem; color: var(--c-text-muted); margin-bottom: 0.85rem; font-size: 0.95rem; font-weight: 600; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <div class="profile-header-inner">
+        {% if profile_user.avatar %}
+            <img src="{{ profile_user.avatar.url }}" alt="{{ profile_user.display_name }}" class="profile-pic">
+        {% else %}
+            <div class="profile-pic">{{ profile_user.display_name|slice:":1"|upper }}</div>
+        {% endif %}
+
+        <div class="profile-meta">
+            <h1>{{ profile_user.display_name }}</h1>
+            <span class="role-badge">
+                {% if profile_user.role == 'instructor' %}أستاذ ومعلم معتمد{% elif profile_user.role == 'student' %}طالب علم منتسب{% else %}ديوان الإدارة الأكاديمية{% endif %}
+            </span>
+            {% if profile_user.role == 'instructor' %}
+            <p style="color: #D3C3B5; font-size: 1.15rem; font-family: var(--font-heading); max-width: 620px;">
+                {{ profile_user.instructor_profile.title|default:"أستاذ معتمد في منصة ارتقاء الأكاديمية" }}
+            </p>
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <h3>{{ published_courses_count }}</h3>
+                    <p>مساقاً منشوراً</p>
+                </div>
+                <div class="profile-stat">
+                    <h3>{{ total_students_count }}</h3>
+                    <p>دارساً منتسباً</p>
+                </div>
+                <div class="profile-stat">
+                    <h3>{{ avg_rating }} ★</h3>
+                    <p>متوسط التزكيات</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="profile-body">
+    <div class="profile-grid">
+        <aside>
+            <div class="info-card">
+                <h3>ترجمة وسيرة موجزة</h3>
+                <p style="color: var(--c-text-main); line-height: 1.85; font-family: var(--font-body); font-size: 0.96rem;">
+                    {{ profile_user.bio|default:"لم يودع صاحب الصحيفة نبذة تعريفية بعد." }}
+                </p>
+                {% if profile_user.role == 'instructor' and profile_user.instructor_profile.expertise %}
+                <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--c-border);">
+                    <strong style="display: block; font-family: var(--font-heading); font-size: 1.05rem; color: var(--c-burgundy-dark); margin-bottom: 0.35rem;">ميادين التخصص:</strong>
+                    <span style="color: var(--c-gold-dark); font-weight: 700; font-size: 0.95rem;">{{ profile_user.instructor_profile.expertise }}</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if profile_user.social_links %}
+            <div class="info-card">
+                <h3>صحائف التواصل والصلة</h3>
+                {% for key, url in profile_user.social_links.items %}
+                <div class="info-item">
+                    <span class="material-icons-round" style="color: var(--c-gold);">link</span>
+                    <a href="{{ url }}" target="_blank" style="color: var(--c-burgundy); font-weight: 700;">{{ key|title }}</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </aside>
+
+        <main>
+            {% if profile_user.role == 'instructor' %}
+            <h2 style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 700; color: var(--c-burgundy-dark); margin-bottom: 1.5rem;">المساقات المعتمدة للأستاذ</h2>
+            <div class="grid cols-3" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
+                {% for course in instructor_courses %}
+                <a href="{% url 'courses:detail' course.slug %}" class="course-card">
+                    <div class="course-img-wrapper" style="height: 170px;">
+                        {% if course.thumbnail %}
+                            <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="course-img">
+                        {% else %}
+                            <div style="height:100%; background:linear-gradient(135deg, var(--c-burgundy-dark), var(--c-burgundy)); display:flex; align-items:center; justify-content:center; color:var(--c-gold-light);">
+                                <span class="material-icons-round" style="font-size:3.5rem;">auto_stories</span>
+                            </div>
+                        {% endif %}
+                        <span class="course-level-pill">{{ course.get_level_display }}</span>
+                    </div>
+                    <div class="course-body">
+                        <span class="course-badge">{{ course.category.name|default:"عام" }}</span>
+                        <h3 class="course-title" style="font-size: 1.2rem;">{{ course.title }}</h3>
+                        <div class="course-footer">
+                            <span class="course-price">
+                                {% if course.effective_price > 0 %}${{ course.effective_price }}{% else %}مجاناً{% endif %}
+                            </span>
+                            <span class="btn btn-outline" style="padding: 0.3rem 0.95rem; font-size: 0.85rem;">مطالعة</span>
+                        </div>
+                    </div>
+                </a>
+                {% empty %}
+                <div style="grid-column:1/-1; text-align:center; padding:3.5rem; background: #FFFFFF; border-radius: var(--radius-sm); border: 1px solid var(--c-border);">
+                    <p style="color:var(--c-text-muted); font-family:var(--font-heading); font-size:1.15rem;">لا توجد مساقات منشورة لهذا الأستاذ حالياً.</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="info-card">
+                <h3>السجل الأكاديمي للدارس</h3>
+                <p style="color: var(--c-text-muted); font-family: var(--font-heading); font-size: 1.15rem;">
+                    طالب علم مسجل ومقيد بصرح ارتقاء منذ {{ profile_user.date_joined|date:"Y-m-d" }} م.
+                </p>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+</div>
+{% endblock %}

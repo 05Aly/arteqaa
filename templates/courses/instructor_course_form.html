@@ -1,0 +1,364 @@
+<!-- templates/courses/instructor_course_form.html -->
+{% extends 'base.html' %}
+{% block title %}{% if form.instance.pk %}تعديل مساق: {{ form.instance.title }}{% else %}إعداد مساق أكاديمي جديد{% endif %} - ارتقاء{% endblock %}
+
+{% block extra_css %}
+<style>
+.course-form-page {
+    padding: 3.5rem 5% 5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.classic-form-header {
+    background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-primary-dark) 100%);
+    color: var(--c-parchment-light);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--c-gold);
+    padding: 2.2rem 2.5rem;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.classic-form-header::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px dashed rgba(194, 155, 83, 0.4);
+    border-radius: calc(var(--radius-lg) - 4px);
+    pointer-events: none;
+}
+
+.classic-form-header h1 {
+    font-family: var(--font-heading);
+    font-size: 2.1rem;
+    color: var(--c-gold-light);
+    margin-bottom: 0.4rem;
+}
+
+.classic-form-header p {
+    color: rgba(250, 246, 238, 0.85);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.form-folio {
+    background: var(--c-parchment-light);
+    border: 1px solid var(--c-gold-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 2.5rem;
+    position: relative;
+}
+
+.form-folio::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    right: 6px;
+    left: 6px;
+    border: 1px solid rgba(194, 155, 83, 0.25);
+    border-radius: calc(var(--radius-lg) - 6px);
+    pointer-events: none;
+}
+
+.folio-section-title {
+    font-family: var(--font-heading);
+    color: var(--c-primary);
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 2rem 0 1.2rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--c-gold-border);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.folio-section-title:first-of-type {
+    margin-top: 0;
+}
+
+.folio-section-title .material-icons-round {
+    color: var(--c-gold);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.4rem;
+}
+
+@media (max-width: 768px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .classic-form-header { padding: 1.8rem; }
+    .form-folio { padding: 1.6rem; }
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--c-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.form-label .req {
+    color: var(--c-burgundy-light);
+    font-size: 1rem;
+}
+
+.form-control {
+    background: #FFFFFF;
+    border: 1.5px solid var(--c-gold-border);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--c-ink);
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--c-gold);
+    box-shadow: 0 0 0 3px rgba(194, 155, 83, 0.18);
+    background: #FFFDF9;
+}
+
+.checkbox-academic-card {
+    background: #FDFBF7;
+    border: 1px dashed var(--c-gold-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.checkbox-academic-card:hover {
+    background: #FAF5EB;
+    border-color: var(--c-gold);
+}
+
+.checkbox-academic-card input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--c-primary);
+    cursor: pointer;
+}
+
+.error-banner {
+    background: #FDF2F2;
+    border: 1px solid #EAA3A3;
+    border-right: 4px solid var(--c-primary);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.error-banner p {
+    color: #9B1C1C;
+    margin: 0.3rem 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.folio-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--c-gold-border);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="course-form-page">
+    <div class="classic-form-header">
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
+                <span class="classic-badge" style="background: var(--c-gold); color: var(--c-primary-dark); font-size: 0.75rem;">
+                    ديوان المحاضر والأستاذ
+                </span>
+                <span style="color: var(--c-gold-light); font-size: 0.85rem;">• صياغة المساقات التعليمية</span>
+            </div>
+            <h1>{% if form.instance.pk %}تعديل مساق: {{ form.instance.title }}{% else %}إعداد مساق تعليمي جديد{% endif %}</h1>
+            <p>{% if form.instance.pk %}قم بتحديث ضوابط وتفاصيل المساق والرسوم وحالة الإتاحة للطلبة{% else %}أدخل البيانات التأسيسية للمساق، ثم انتقل لتنسيق الوحدات والدروس والمرفقات{% endif %}</p>
+        </div>
+        
+        <div style="display: flex; gap: 0.8rem; z-index: 2;">
+            {% if form.instance.pk %}
+            <a href="{% url 'courses:manage_content' form.instance.slug %}" class="btn btn-secondary">
+                <span class="material-icons-round">account_tree</span> إدارة الوحدات والدروس
+            </a>
+            {% endif %}
+            <a href="{% url 'accounts:instructor_dashboard' %}" class="btn btn-outline" style="border-color: var(--c-gold-border); color: var(--c-gold-light);">
+                <span class="material-icons-round">dashboard</span> مجلس الأستاذ
+            </a>
+        </div>
+    </div>
+
+    <div class="form-folio">
+        {% if form.errors %}
+        <div class="error-banner">
+            <strong style="color: #9B1C1C; display: block; margin-bottom: 0.5rem;">يرجى مراجعة وتصحيح الملاحظات التالية:</strong>
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                <p>• {{ field }}: {{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="folio-section-title">
+                <span class="material-icons-round">auto_stories</span>
+                <span>البيانات الأساسية وتوصيف المساق</span>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label class="form-label" for="{{ form.title.id_for_label }}">
+                        عنوان المساق الأكاديمي <span class="req">*</span>
+                    </label>
+                    {{ form.title }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.category.id_for_label }}">
+                        التصنيف المعرفي <span class="req">*</span>
+                    </label>
+                    {{ form.category }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.level.id_for_label }}">
+                        المستوى الدراسي
+                    </label>
+                    {{ form.level }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.language.id_for_label }}">
+                        لغة التدريس
+                    </label>
+                    {{ form.language }}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.status.id_for_label }}">
+                        حالة اعتماد ونشر المساق
+                    </label>
+                    {{ form.status }}
+                </div>
+
+                <div class="form-group full">
+                    <label class="form-label" for="{{ form.description.id_for_label }}">
+                        التوصيف العلمي الشامل للمساق ومخرجات التعلم <span class="req">*</span>
+                    </label>
+                    {{ form.description }}
+                </div>
+            </div>
+
+            <div class="folio-section-title">
+                <span class="material-icons-round">payments</span>
+                <span>الرسوم والقيمة المالية للمساق</span>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.price.id_for_label }}">
+                        الرسم الأساسي للمساق ($) <span class="req">*</span>
+                    </label>
+                    {{ form.price }}
+                    <small style="color: var(--c-ink-light); font-size: 0.82rem;">ضع 0 إذا كان المساق متاحاً لوجه الله / مجاناً للطلبة</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.discount_price.id_for_label }}">
+                        الرسم المخفض بعد الإكرام ($)
+                    </label>
+                    {{ form.discount_price }}
+                    <small style="color: var(--c-ink-light); font-size: 0.82rem;">اختياري: اتركه فارغاً إذا كان السعر ثابتاً دون خصم</small>
+                </div>
+            </div>
+
+            <div class="folio-section-title">
+                <span class="material-icons-round">ondemand_video</span>
+                <span>الوسائط التعريفية والغلاف</span>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label class="form-label" for="{{ form.preview_video.id_for_label }}">
+                        رابط الفيديو التمهيدي (مقدمة مرئية عامة)
+                    </label>
+                    {{ form.preview_video }}
+                    <small style="color: var(--c-ink-light); font-size: 0.82rem;">رابط مقطع يوتيوب أو فيديو تعريفي يظهر للزوار قبل التسجيل</small>
+                </div>
+
+                <div class="form-group full">
+                    <label class="form-label" for="{{ form.thumbnail.id_for_label }}">
+                        لوحة الغلاف المصورة
+                    </label>
+                    {{ form.thumbnail }}
+                    <small style="color: var(--c-ink-light); font-size: 0.82rem;">صورة رمزية أنيقة تعبر عن محتوى المساق بدقة عالية</small>
+                </div>
+
+                <div class="form-group full">
+                    <label class="checkbox-academic-card" for="{{ form.is_featured.id_for_label }}">
+                        {{ form.is_featured }}
+                        <div>
+                            <strong style="color: var(--c-primary); display: block; font-family: var(--font-heading); font-size: 1.05rem;">
+                                إدراج المساق ضمن المساقات المختارة والمميزة
+                            </strong>
+                            <span style="color: var(--c-ink-light); font-size: 0.85rem;">
+                                يظهر المساق في صدر الصفحة الرئيسية وخزانة العرض الرئيسية للمنصة
+                            </span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="folio-actions">
+                <a href="{% url 'accounts:instructor_dashboard' %}" class="btn btn-outline">
+                    <span class="material-icons-round">arrow_forward</span> العودة لمجلس الأستاذ
+                </a>
+                <button type="submit" class="btn btn-primary" style="padding: 0.85rem 2rem;">
+                    <span class="material-icons-round">verified</span>
+                    {% if form.instance.pk %}اعتماد وحفظ التعديلات{% else %}تسجيل المساق والانتقال لمنهج الوحدات{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

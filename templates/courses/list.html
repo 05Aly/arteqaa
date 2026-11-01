@@ -1,0 +1,339 @@
+<!-- templates/courses/list.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ديوان الكورسات والمساقات - ارتقاء الأكاديمية{% endblock %}
+
+{% block extra_css %}
+<style>
+.catalog-banner {
+    background: linear-gradient(135deg, #4A0C16 0%, #2D050D 100%);
+    color: #FFFFFF;
+    padding: 4rem 5%;
+    text-align: center;
+    border-bottom: 2px solid var(--c-gold);
+}
+.catalog-banner h1 {
+    font-family: var(--font-heading);
+    font-size: 2.8rem;
+    color: var(--c-gold-light);
+    margin-bottom: 0.5rem;
+}
+.catalog-banner p {
+    font-family: var(--font-heading);
+    color: #D3C3B5;
+    font-size: 1.2rem;
+}
+
+.course-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2.5rem;
+    padding: 3.5rem 5%;
+    max-width: 1380px;
+    margin: 0 auto;
+    align-items: start;
+}
+@media (max-width: 980px) {
+    .course-layout { grid-template-columns: 1fr; }
+}
+
+/* Classic Parchment Filter Sidebar */
+.filter-sidebar {
+    background: #FFFFFF;
+    padding: 1.8rem;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-classic);
+    border: 1px solid var(--c-border);
+    outline: 1px solid var(--c-gold-soft);
+    outline-offset: -5px;
+    position: sticky;
+    top: 95px;
+}
+
+.filter-section {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.4rem;
+    border-bottom: 1px dashed var(--c-border);
+}
+.filter-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0;
+}
+
+.filter-title {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--c-burgundy-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    color: var(--c-text-muted);
+    font-size: 0.94rem;
+    transition: var(--transition);
+}
+.filter-label:hover { color: var(--c-burgundy); }
+.filter-label input {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--c-burgundy);
+}
+
+.count-pill {
+    background: var(--c-parchment-bg);
+    border: 1px solid var(--c-border);
+    color: var(--c-gold-dark);
+    font-size: 0.75rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-family: var(--font-classic);
+}
+
+/* Toolbar */
+.results-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: #FFFFFF;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--c-border);
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-classic);
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 3.5rem;
+}
+.page-btn {
+    min-width: 42px;
+    height: 42px;
+    padding: 0 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--c-border);
+    background: #FFFFFF;
+    color: var(--c-text-main);
+    font-family: var(--font-classic);
+    font-weight: 700;
+    transition: var(--transition);
+}
+.page-btn:hover, .page-btn.active {
+    background: var(--c-burgundy);
+    color: #FFFFFF;
+    border-color: var(--c-burgundy-dark);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="catalog-banner">
+    <div style="font-family: var(--font-heading); color: var(--c-gold); font-size: 1.1rem; margin-bottom: 0.4rem;">❖ سِجِلُّ المَعَارِفِ وَالمَسَاقَاتِ ❖</div>
+    <h1>خزانة الكورسات الأكاديمية</h1>
+    <p>تصفح ديوان المناهج المعتمدة واختر مساقك للارتقاء في معارفك ومهاراتك</p>
+</div>
+
+<div class="course-layout">
+    <!-- Sidebar Filter -->
+    <aside class="filter-sidebar">
+        <form method="GET" action="{% url 'courses:list' %}" id="filter-form">
+            <input type="hidden" name="sort" id="sort-input" value="{{ current_sort }}">
+            
+            <div class="filter-section">
+                <h3 class="filter-title">
+                    <span class="material-icons-round" style="color: var(--c-gold); font-size: 1.25rem;">search</span>
+                    البحث في الخزانة
+                </h3>
+                <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="اسم المساق أو الأستاذ..." style="width: 100%; padding: 0.65rem 1rem; border-radius: var(--radius-sm); border: 1.5px solid var(--c-border); font-family: var(--font-body); font-size: 0.92rem; outline: none; background: var(--c-parchment-bg);">
+            </div>
+            
+            <div class="filter-section">
+                <h3 class="filter-title">
+                    <span class="material-icons-round" style="color: var(--c-gold); font-size: 1.25rem;">account_balance</span>
+                    ميادين العلم
+                </h3>
+                {% for category in categories %}
+                <label class="filter-label">
+                    <span style="display: flex; align-items: center; gap: 0.6rem;">
+                        <input type="checkbox" name="category" value="{{ category.slug }}" {% if category.slug in selected_categories %}checked{% endif %}>
+                        {{ category.name }}
+                    </span>
+                    <span class="count-pill">{{ category.course_count }}</span>
+                </label>
+                {% empty %}
+                <p style="color: var(--c-text-muted); font-size: 0.9rem;">لا توجد أقسام مسجلة</p>
+                {% endfor %}
+            </div>
+
+            <div class="filter-section">
+                <h3 class="filter-title">
+                    <span class="material-icons-round" style="color: var(--c-gold); font-size: 1.25rem;">stairs</span>
+                    الرتبة العلمية
+                </h3>
+                <label class="filter-label">
+                    <span style="display: flex; align-items: center; gap: 0.6rem;">
+                        <input type="checkbox" name="level" value="beginner" {% if 'beginner' in selected_levels %}checked{% endif %}>
+                        المستوى المبتدئ (تأسيسي)
+                    </span>
+                </label>
+                <label class="filter-label">
+                    <span style="display: flex; align-items: center; gap: 0.6rem;">
+                        <input type="checkbox" name="level" value="intermediate" {% if 'intermediate' in selected_levels %}checked{% endif %}>
+                        المستوى المتوسط (تطبيقي)
+                    </span>
+                </label>
+                <label class="filter-label">
+                    <span style="display: flex; align-items: center; gap: 0.6rem;">
+                        <input type="checkbox" name="level" value="advanced" {% if 'advanced' in selected_levels %}checked{% endif %}>
+                        المستوى المتقدم (تخصصي)
+                    </span>
+                </label>
+            </div>
+
+            <div class="filter-section">
+                <h3 class="filter-title">
+                    <span class="material-icons-round" style="color: var(--c-gold); font-size: 1.25rem;">paid</span>
+                    رسم المساق
+                </h3>
+                <label class="filter-label">
+                    <span style="display: flex; align-items: center; gap: 0.6rem;">
+                        <input type="radio" name="price_type" value="" {% if not current_price_type %}checked{% endif %}>
+                        كافة المساقات
+                    </span>
+                </label>
+                <label class="filter-label">
+                    <span style="display: flex; align-items: center; gap: 0.6rem;">
+                        <input type="radio" name="price_type" value="free" {% if current_price_type == 'free' %}checked{% endif %}>
+                        مساقات منحة (مجانية)
+                    </span>
+                </label>
+                <label class="filter-label">
+                    <span style="display: flex; align-items: center; gap: 0.6rem;">
+                        <input type="radio" name="price_type" value="paid" {% if current_price_type == 'paid' %}checked{% endif %}>
+                        مساقات برسم اشتراك
+                    </span>
+                </label>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <span class="material-icons-round" style="font-size: 1.1rem; color: var(--c-gold-light);">filter_list</span>
+                    تطبيق التصنيف
+                </button>
+                <a href="{% url 'courses:list' %}" class="btn btn-outline" style="width: 100%; font-size: 0.88rem; padding: 0.5rem;">إلغاء وتفريغ الفلاتر</a>
+            </div>
+        </form>
+    </aside>
+
+    <!-- Main Results Registry -->
+    <div class="course-results">
+        <div class="results-toolbar">
+            <p style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--c-text-main);">
+                إجمالي السجلات: <strong style="color: var(--c-burgundy); font-family: var(--font-classic);">{{ page_obj.paginator.count }}</strong> مساقاً دراسياً
+            </p>
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <label style="font-family: var(--font-heading); font-size: 1.05rem; color: var(--c-text-muted);">ترتيب السجلات:</label>
+                <select style="border-radius: var(--radius-sm); padding: 0.45rem 0.9rem; border: 1.5px solid var(--c-border); font-family: var(--font-body); font-weight: 700; color: var(--c-burgundy-dark); background: var(--c-parchment-bg); outline: none; cursor: pointer;" onchange="document.getElementById('sort-input').value=this.value; document.getElementById('filter-form').submit();">
+                    <option value="-created_at" {% if current_sort == '-created_at' %}selected{% endif %}>الأحدث إيداعاً</option>
+                    <option value="popular" {% if current_sort == 'popular' %}selected{% endif %}>الأكثر إقبالاً وقيداً</option>
+                    <option value="rating" {% if current_sort == 'rating' %}selected{% endif %}>الأعلى تقييماً وتزكية</option>
+                    <option value="price" {% if current_sort == 'price' %}selected{% endif %}>الرسم: الأقل فالأعلى</option>
+                    <option value="-price" {% if current_sort == '-price' %}selected{% endif %}>الرسم: الأعلى فالأقل</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid cols-3" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+            {% for course in page_obj %}
+            <a href="{% url 'courses:detail' course.slug %}" class="course-card">
+                <div class="course-img-wrapper">
+                    {% if course.thumbnail %}
+                        <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="course-img">
+                    {% else %}
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--c-burgundy-dark), var(--c-burgundy)); color: var(--c-gold-light);">
+                            <span class="material-icons-round" style="font-size: 4rem; opacity: 0.85;">menu_book</span>
+                        </div>
+                    {% endif %}
+                    <span class="course-level-pill">{{ course.get_level_display }}</span>
+                    {% if course.has_discount %}
+                    <span class="course-discount-pill">خصم {{ course.discount_percentage }}%</span>
+                    {% endif %}
+                </div>
+                <div class="course-body">
+                    <span class="course-badge">{{ course.category.name|default:"عام" }}</span>
+                    <h3 class="course-title">{{ course.title }}</h3>
+                    <p style="color: var(--c-text-muted); font-size: 0.88rem; margin-bottom: 0.8rem; line-height: 1.6;">{{ course.description|truncatewords:14 }}</p>
+                    <div class="course-meta">
+                        <span><span class="material-icons-round" style="font-size: 1.1rem; color: var(--c-burgundy);">history_edu</span> {{ course.instructor.display_name }}</span>
+                        <span><span class="material-icons-round text-yellow" style="font-size: 1.1rem;">star</span> {{ course.average_rating|default:"4.9" }}</span>
+                        <span><span class="material-icons-round" style="font-size: 1.1rem; color: var(--c-gold-dark);">group</span> {{ course.students_count|default:0 }}</span>
+                    </div>
+                    <div class="course-footer">
+                        <div class="course-price">
+                            {% if course.effective_price > 0 %}
+                                <span>${{ course.effective_price }}</span>
+                                {% if course.has_discount %}
+                                    <span class="course-old-price">${{ course.price }}</span>
+                                {% endif %}
+                            {% else %}
+                                <span style="color: var(--c-emerald); font-weight: 800; font-size: 1.1rem;">مَجَّانِيّ</span>
+                            {% endif %}
+                        </div>
+                        <span class="btn btn-outline" style="padding: 0.35rem 1rem; font-size: 0.85rem;">مطالعة</span>
+                    </div>
+                </div>
+            </a>
+            {% empty %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 5rem 2rem; background: #FFFFFF; border-radius: var(--radius-sm); border: 1px solid var(--c-border); outline: 1px solid var(--c-gold-soft); outline-offset: -6px;">
+                <span class="material-icons-round" style="font-size: 4.5rem; color: var(--c-gold); margin-bottom: 1rem;">menu_book</span>
+                <h3 style="font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--c-burgundy-dark);">لم نجد مساقات مطابقة لبحثك في الخزانة</h3>
+                <p style="color: var(--c-text-muted); margin-bottom: 1.5rem; font-family: var(--font-heading); font-size: 1.1rem;">جرب البحث بكلمات أخرى أو قم بإلغاء بعض الفلاتر لاستعراض كامل الخزانة.</p>
+                <a href="{% url 'courses:list' %}" class="btn btn-primary">عرض كامل خزانة الكورسات</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if filter_query_string %}&{{ filter_query_string }}{% endif %}" class="page-btn"><span class="material-icons-round">chevron_right</span></a>
+            {% endif %}
+            
+            {% for i in page_obj.paginator.page_range %}
+                {% if page_obj.number == i %}
+                    <span class="page-btn active">{{ i }}</span>
+                {% else %}
+                    <a href="?page={{ i }}{% if filter_query_string %}&{{ filter_query_string }}{% endif %}" class="page-btn">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if filter_query_string %}&{{ filter_query_string }}{% endif %}" class="page-btn"><span class="material-icons-round">chevron_left</span></a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

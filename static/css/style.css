@@ -1,0 +1,751 @@
+/* ============================================================
+   Edu-Plat — منصة ارتقاء الأكاديمية
+   Classic & Traditional Academic Design System
+   Palette: Rich Imperial Burgundy, Burnished Antique Gold, Warm Linen Parchment
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@400;500;600;700;800;900&family=Cinzel:wght@600;700;800;900&display=swap');
+
+:root {
+  /* Burgundy Primary Palette */
+  --c-burgundy-dark: #3A0710;
+  --c-burgundy: #671120;
+  --c-burgundy-light: #881B2E;
+  --c-burgundy-soft: rgba(103, 17, 32, 0.08);
+  --c-burgundy-glow: rgba(103, 17, 32, 0.22);
+
+  /* Antique Gold & Brass Accent Palette */
+  --c-gold-dark: #8C6A2E;
+  --c-gold: #C29B53;
+  --c-gold-light: #E5CFA0;
+  --c-gold-soft: rgba(194, 155, 83, 0.12);
+  --c-gold-gradient: linear-gradient(135deg, #DFBE82 0%, #C29B53 50%, #8C6A2E 100%);
+
+  /* Warm Linen & Parchment Backgrounds */
+  --c-parchment-bg: #FAF6EE;
+  --c-parchment-subtle: #F3ECE0;
+  --c-surface: #FFFFFF;
+  --c-surface-card: #FDFBF7;
+  
+  /* Traditional Typography & Border Colors */
+  --c-text-main: #231316;
+  --c-text-muted: #6B5B57;
+  --c-border: #E4D8C8;
+  --c-border-gold: #D0B37B;
+  --c-border-dark: #3A0710;
+
+  /* Classic Accents */
+  --c-emerald: #1B5E4B;
+  --c-emerald-light: #2A826A;
+  --c-amber: #B85F18;
+  --c-danger: #8E1F29;
+
+  /* Typography */
+  --font-heading: 'Amiri', serif;
+  --font-body: 'Cairo', sans-serif;
+  --font-classic: 'Cinzel', 'Amiri', serif;
+
+  /* Layout & Elevations */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow-classic: 0 4px 15px rgba(58, 7, 16, 0.06), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-hover: 0 12px 28px rgba(58, 7, 16, 0.12), 0 2px 6px rgba(0,0,0,0.06);
+  --shadow-inset: inset 0 2px 6px rgba(58, 7, 16, 0.04);
+  --transition: all 0.25s ease-in-out;
+}
+
+/* ============================================================
+   GLOBAL RESETS & ACADEMIC TYPOGRAPHY
+   ============================================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--c-parchment-bg);
+  color: var(--c-text-main);
+  line-height: 1.7;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(194, 155, 83, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(103, 17, 32, 0.03) 0%, transparent 40%);
+}
+
+main {
+  flex: 1;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--c-burgundy-dark);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition);
+}
+
+ul {
+  list-style: none;
+}
+
+/* Classic Academic Ornament Divider */
+.ornament-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem auto;
+  color: var(--c-gold);
+  font-size: 0.95rem;
+}
+.ornament-divider::before,
+.ornament-divider::after {
+  content: '';
+  height: 1px;
+  width: 60px;
+  background: linear-gradient(90deg, transparent, var(--c-gold));
+}
+.ornament-divider::after {
+  background: linear-gradient(90deg, var(--c-gold), transparent);
+}
+
+/* ============================================================
+   TOP HERITAGE ANNOUNCEMENT RIBBON
+   ============================================================ */
+.top-ribbon {
+  background: var(--c-burgundy-dark);
+  color: var(--c-gold-light);
+  font-size: 0.82rem;
+  padding: 0.45rem 5%;
+  text-align: center;
+  border-bottom: 1px solid var(--c-gold-dark);
+  letter-spacing: 0.5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.top-ribbon-text {
+  font-family: var(--font-heading);
+  font-size: 0.98rem;
+}
+.top-ribbon-links {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+}
+.top-ribbon-links a {
+  color: var(--c-gold-light);
+  transition: var(--transition);
+}
+.top-ribbon-links a:hover {
+  color: #FFFFFF;
+}
+
+@media (max-width: 768px) {
+  .top-ribbon-links { display: none; }
+  .top-ribbon { justify-content: center; }
+}
+
+/* ============================================================
+   NAVBAR (REGAL BURGUNDY & PARCHMENT TRIM)
+   ============================================================ */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #FFFFFF;
+  border-bottom: 2px solid var(--c-gold);
+  padding: 0.75rem 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 4px 18px rgba(58, 7, 16, 0.05);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.crest-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--c-burgundy), var(--c-burgundy-dark));
+  border: 2px solid var(--c-gold);
+  box-shadow: 0 2px 6px rgba(58, 7, 16, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-gold-light);
+  flex-shrink: 0;
+}
+
+.brand-text-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-family: var(--font-heading);
+  font-size: 1.95rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--c-burgundy);
+}
+
+.brand-sub {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--c-gold-dark);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav-links a {
+  font-family: var(--font-heading);
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: var(--c-text-main);
+  transition: var(--transition);
+  position: relative;
+  padding: 0.3rem 0;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 2px;
+  background: var(--c-burgundy);
+  transition: var(--transition);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--c-burgundy);
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  width: 100%;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+/* Classical Search Box */
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-bar input {
+  padding: 0.55rem 2.6rem 0.55rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--c-border);
+  background: var(--c-parchment-bg);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  width: 210px;
+  outline: none;
+  transition: var(--transition);
+  color: var(--c-text-main);
+}
+
+.search-bar input:focus {
+  width: 250px;
+  background: #FFFFFF;
+  border-color: var(--c-gold);
+  box-shadow: 0 0 0 3px var(--c-gold-soft);
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--c-gold-dark);
+  font-size: 1.15rem;
+  pointer-events: none;
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  padding: 0.45rem;
+  cursor: pointer;
+  color: var(--c-burgundy);
+}
+
+@media (max-width: 980px) {
+  .mobile-menu-btn { display: inline-flex; align-items: center; justify-content: center; }
+  .nav-links, .nav-actions .search-bar { display: none; }
+  .navbar.menu-open { flex-wrap: wrap; }
+  .navbar.menu-open .nav-links {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    order: 3;
+    padding: 1.25rem 0 0.5rem;
+    border-top: 1px solid var(--c-border);
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}
+
+/* ============================================================
+   CLASSICAL BUTTONS (BURGUNDY VELVET & ANTIQUE GOLD)
+   ============================================================ */
+.btn {
+  padding: 0.6rem 1.4rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--c-burgundy);
+  color: #FFFFFF;
+  border-color: var(--c-burgundy-dark);
+  box-shadow: 0 2px 8px rgba(103, 17, 32, 0.25);
+  position: relative;
+}
+
+.btn-primary:hover {
+  background: var(--c-burgundy-light);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 15px rgba(103, 17, 32, 0.35);
+  color: #FFFFFF;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--c-burgundy);
+  border: 1px solid var(--c-burgundy);
+}
+
+.btn-outline:hover {
+  background: var(--c-burgundy);
+  color: #FFFFFF;
+  border-color: var(--c-burgundy);
+  transform: translateY(-1px);
+}
+
+.btn-gold {
+  background: var(--c-gold-gradient);
+  color: var(--c-burgundy-dark);
+  border-color: var(--c-gold-dark);
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(140, 106, 46, 0.25);
+}
+
+.btn-gold:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(140, 106, 46, 0.35);
+}
+
+.btn-accent {
+  background: var(--c-burgundy);
+  color: var(--c-gold-light);
+  border: 1px solid var(--c-gold);
+  box-shadow: 0 3px 10px rgba(58, 7, 16, 0.3);
+}
+
+.btn-accent:hover {
+  background: var(--c-burgundy-dark);
+  color: #FFFFFF;
+  border-color: var(--c-gold-light);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--c-emerald);
+  color: #FFFFFF;
+  border-color: var(--c-emerald-light);
+}
+
+.btn-secondary:hover {
+  background: var(--c-emerald-light);
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   CLASSIC BOOK-STYLE COURSE CARDS
+   ============================================================ */
+.course-card {
+  background: var(--c-surface-card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-classic);
+  transition: var(--transition);
+  border: 1px solid var(--c-border);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.course-card::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(194, 155, 83, 0.2);
+  border-radius: calc(var(--radius) - 2px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--c-gold);
+}
+
+.course-img-wrapper {
+  position: relative;
+  height: 195px;
+  width: 100%;
+  overflow: hidden;
+  background: var(--c-burgundy-dark);
+  border-bottom: 2px solid var(--c-gold);
+}
+
+.course-img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.course-card:hover .course-img {
+  transform: scale(1.05);
+}
+
+.course-level-pill {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(35, 19, 22, 0.88);
+  border: 1px solid var(--c-gold);
+  color: var(--c-gold-light);
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.74rem;
+  font-weight: 700;
+  z-index: 3;
+}
+
+.course-discount-pill {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--c-burgundy);
+  border: 1px solid var(--c-gold-light);
+  color: var(--c-gold-light);
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.74rem;
+  font-weight: 800;
+  z-index: 3;
+}
+
+.course-body {
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+  z-index: 3;
+}
+
+.course-badge {
+  background: var(--c-gold-soft);
+  color: var(--c-gold-dark);
+  border: 1px solid rgba(194, 155, 83, 0.3);
+  padding: 0.2rem 0.75rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.76rem;
+  font-weight: 700;
+  display: inline-block;
+  width: fit-content;
+  margin-bottom: 0.65rem;
+}
+
+.course-title {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--c-burgundy-dark);
+  line-height: 1.4;
+}
+
+.course-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  color: var(--c-text-muted);
+  font-size: 0.85rem;
+  margin-top: auto;
+  padding-top: 0.65rem;
+  margin-bottom: 0.9rem;
+  border-top: 1px dashed var(--c-border);
+}
+
+.course-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.course-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--c-border);
+}
+
+.course-price {
+  font-family: var(--font-classic);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--c-burgundy);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.course-old-price {
+  font-size: 0.88rem;
+  color: var(--c-text-muted);
+  text-decoration: line-through;
+  font-weight: normal;
+}
+
+/* ============================================================
+   CLASSICAL ACCORDION & PLAYER LISTS
+   ============================================================ */
+.accordion-item {
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.85rem;
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+.accordion-header {
+  background: var(--c-surface-card);
+  padding: 1.1rem 1.4rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--c-burgundy-dark);
+  transition: var(--transition);
+  border-bottom: 1px solid transparent;
+}
+
+.accordion-item.open .accordion-header {
+  border-bottom-color: var(--c-border);
+  background: #FFFFFF;
+}
+
+.lesson-item {
+  padding: 0.9rem 1.4rem;
+  border-top: 1px solid var(--c-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  transition: var(--transition);
+}
+
+.lesson-item:hover {
+  background: var(--c-parchment-bg);
+}
+
+/* ============================================================
+   CLASSICAL FOOTER
+   ============================================================ */
+.footer {
+  background: var(--c-burgundy-dark);
+  color: #E6D8CC;
+  padding: 4.5rem 5% 2rem;
+  margin-top: 5rem;
+  border-top: 3px solid var(--c-gold);
+  position: relative;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--c-gold-gradient);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.footer-col h3 {
+  font-family: var(--font-heading);
+  margin-bottom: 1.25rem;
+  font-size: 1.35rem;
+  color: var(--c-gold-light);
+  border-bottom: 1px solid rgba(194, 155, 83, 0.3);
+  padding-bottom: 0.5rem;
+}
+
+.footer-col ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-col a {
+  color: #D3C3B5;
+  transition: var(--transition);
+  font-size: 0.94rem;
+}
+
+.footer-col a:hover {
+  color: var(--c-gold-light);
+  padding-right: 6px;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(229, 207, 160, 0.15);
+  padding-top: 1.75rem;
+  text-align: center;
+  color: #B5A090;
+  font-size: 0.88rem;
+  font-family: var(--font-heading);
+}
+
+/* ============================================================
+   TOAST NOTIFICATIONS (DIPLOMA-SEAL MOTIF)
+   ============================================================ */
+.toast-container {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-width: 420px;
+}
+
+.toast {
+  background: #FFFFFF;
+  padding: 1rem 1.4rem;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 15px 30px rgba(58, 7, 16, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  animation: toastSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  border-right: 4px solid var(--c-burgundy);
+  border-left: 1px solid var(--c-border);
+  border-top: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--c-border);
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.toast.success { border-right-color: var(--c-emerald); }
+.toast.success .material-icons-round { color: var(--c-emerald); }
+.toast.error { border-right-color: var(--c-danger); }
+.toast.error .material-icons-round { color: var(--c-danger); }
+.toast.warning { border-right-color: var(--c-amber); }
+.toast.warning .material-icons-round { color: var(--c-amber); }
+.toast.info .material-icons-round { color: var(--c-burgundy); }
+
+@keyframes toastSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Utility Containers */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 5%;
+}
+
+.grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.cols-3 {
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+}
+
+.text-gold {
+  color: var(--c-gold);
+}
+
+.text-yellow {
+  color: #D4A017;
+}
+
+.academic-frame {
+  border: 1px solid var(--c-border);
+  outline: 1px solid var(--c-gold);
+  outline-offset: -5px;
+  background: #FFFFFF;
+  border-radius: var(--radius-sm);
+  padding: 2rem;
+}

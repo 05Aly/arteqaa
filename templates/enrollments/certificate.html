@@ -1,0 +1,286 @@
+<!-- templates/enrollments/certificate.html -->
+{% extends 'base.html' %}
+{% block title %}صك إتمام مساق - {{ cert.enrollment.course.title }} | ارتقاء{% endblock %}
+
+{% block extra_css %}
+<style>
+.cert-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3.5rem 5%;
+    background: #EFE8DC;
+    background-image: radial-gradient(circle at center, #F8F3EA 0%, #E6DDCE 100%);
+    min-height: calc(100vh - 120px);
+}
+
+.cert-wrapper {
+    width: 100%;
+    max-width: 950px;
+}
+
+/* Classical Royal Academic Diploma Frame */
+.cert-card {
+    background: #FFFDF9;
+    padding: 4.5rem 4rem;
+    box-shadow: 0 25px 60px rgba(58, 7, 16, 0.18), 0 2px 10px rgba(0,0,0,0.06);
+    text-align: center;
+    position: relative;
+    border: 3px solid var(--c-burgundy-dark);
+    outline: 2px solid var(--c-gold);
+    outline-offset: -12px;
+}
+
+.cert-card::before {
+    content: '';
+    position: absolute;
+    inset: 16px;
+    border: 1px solid var(--c-gold-dark);
+    pointer-events: none;
+}
+
+/* Corner Ornaments */
+.cert-corner {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    color: var(--c-gold);
+    font-size: 1.5rem;
+    line-height: 1;
+}
+.cert-corner.top-left { top: 20px; left: 20px; }
+.cert-corner.top-right { top: 20px; right: 20px; }
+.cert-corner.bottom-left { bottom: 20px; left: 20px; }
+.cert-corner.bottom-right { bottom: 20px; right: 20px; }
+
+.cert-bismillah {
+    font-family: var(--font-heading);
+    font-size: 1.45rem;
+    color: var(--c-gold-dark);
+    margin-bottom: 1.5rem;
+}
+
+.cert-crest {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--c-burgundy), var(--c-burgundy-dark));
+    border: 3px solid var(--c-gold);
+    box-shadow: 0 4px 14px rgba(58, 7, 16, 0.3);
+    margin: 0 auto 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-gold-light);
+}
+
+.cert-title-academic {
+    font-family: var(--font-heading);
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--c-burgundy);
+    margin-bottom: 0.25rem;
+}
+
+.cert-subtitle-academic {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    color: var(--c-gold-dark);
+    letter-spacing: 2px;
+    margin-bottom: 2rem;
+}
+
+.cert-proclamation {
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    color: var(--c-text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.cert-student-name {
+    font-family: var(--font-heading);
+    font-size: 3.2rem;
+    font-weight: 700;
+    color: var(--c-burgundy-dark);
+    margin: 0.5rem 0 1.2rem;
+    line-height: 1.2;
+    text-shadow: 1px 1px 0 rgba(194, 155, 83, 0.2);
+}
+
+.cert-body-text {
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    color: var(--c-text-main);
+    max-width: 680px;
+    margin: 0 auto 1rem;
+    line-height: 1.8;
+}
+
+.cert-course-name {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--c-burgundy);
+    margin: 0.5rem 0 2.5rem;
+}
+
+/* Classical Signatures & Seal Box */
+.cert-footer-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--c-border);
+    position: relative;
+}
+
+.cert-sign-col {
+    width: 200px;
+    text-align: center;
+}
+.cert-sign-line {
+    width: 100%;
+    height: 1px;
+    background: var(--c-gold);
+    margin: 0.75rem 0 0.5rem;
+}
+.cert-sign-title {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--c-burgundy-dark);
+}
+.cert-sign-name {
+    font-size: 0.88rem;
+    color: var(--c-text-muted);
+}
+
+/* Official Wax Seal Motif */
+.cert-wax-seal {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #8C1F32 0%, #4D0914 85%);
+    border: 3px solid var(--c-gold-light);
+    box-shadow: 0 6px 18px rgba(58, 7, 16, 0.4), inset 0 0 12px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-gold-light);
+    margin: 0 auto;
+    position: relative;
+}
+.cert-wax-seal::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    width: 24px;
+    height: 24px;
+    background: #4D0914;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.cert-meta-code {
+    margin-top: 2.5rem;
+    font-family: var(--font-classic);
+    font-size: 0.8rem;
+    color: #9C8A7C;
+    letter-spacing: 1px;
+}
+
+.cert-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+}
+
+@media print {
+    .navbar, .footer, .cert-actions, .toast-container, .top-ribbon { display: none !important; }
+    body, .cert-page { background: #FFFFFF !important; padding: 0 !important; margin: 0 !important; }
+    .cert-card { box-shadow: none !important; border: 4px solid #3A0710 !important; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cert-page">
+    <div class="cert-wrapper">
+        <div id="certificate" class="cert-card">
+            <!-- Corner Ornaments -->
+            <div class="cert-corner top-left">❖</div>
+            <div class="cert-corner top-right">❖</div>
+            <div class="cert-corner bottom-left">❖</div>
+            <div class="cert-corner bottom-right">❖</div>
+
+            <!-- Bismillah -->
+            <div class="cert-bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+
+            <!-- Academy Crest -->
+            <div class="cert-crest">
+                <span class="material-icons-round" style="font-size: 2.3rem;">school</span>
+            </div>
+
+            <!-- Main Proclamation -->
+            <div class="cert-title-academic">صَكُّ إِتْمَامٍ وَتَزْكِيَةٍ أَكَادِيمِيَّةٍ</div>
+            <div class="cert-subtitle-academic">صَادِرٌ عَنْ مَجْلِسِ أُمَنَاءِ صَرْحِ ارْتِقَاءْ لِلعُلُومِ وَالمَعَارِفِ</div>
+
+            <div class="ornament-divider">❖ ─── ✤ ─── ❖</div>
+
+            <p class="cert-proclamation">يَشْهَدُ المَجْلِسُ الأَكَادِيمِيُّ لِلْمَنَصَّةِ بِأَنَّ الطَّالِبَ المُنْتَسِبَ:</p>
+            <h1 class="cert-student-name">{{ cert.enrollment.student.display_name }}</h1>
+
+            <p class="cert-body-text">
+                قَدْ وَفَّى كَافَّةَ مُتَطَلَّبَاتِ التَّحْصِيلِ العِلْمِيِّ وَأَتَمَّ سَائِرَ الدُّرُوسِ وَالتَّطْبِيقَاتِ المَنْهَجِيَّةِ المُقَرَّرَةِ فِي:
+            </p>
+
+            <h2 class="cert-course-name">«{{ cert.enrollment.course.title }}»</h2>
+
+            <p style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--c-text-muted);">
+                بِرِتْبَةِ: ({{ cert.enrollment.course.get_level_display }}) • تَارِيخُ الإِصْدَارِ: {{ cert.issued_at|date:"d F Y" }} م
+            </p>
+
+            <!-- Signatures & Wax Seal -->
+            <div class="cert-footer-grid">
+                <div class="cert-sign-col">
+                    <div class="cert-sign-title">أُسْتَاذُ وَمُشْرِفُ المَسَاقِ</div>
+                    <div class="cert-sign-line"></div>
+                    <div class="cert-sign-name">{{ cert.enrollment.course.instructor.display_name }}</div>
+                </div>
+
+                <!-- Central Imperial Wax Seal -->
+                <div class="cert-wax-seal">
+                    <span class="material-icons-round" style="font-size: 1.8rem;">verified</span>
+                    <span style="font-size: 0.65rem; font-family: var(--font-classic); font-weight: 800; letter-spacing: 0.5px;">معتمد</span>
+                </div>
+
+                <div class="cert-sign-col">
+                    <div class="cert-sign-title">عَمِيدُ الشُّؤُونِ الأَكَادِيمِيَّةِ</div>
+                    <div class="cert-sign-line"></div>
+                    <div class="cert-sign-name">أ.د. عَبْدُ الرَّحْمَنِ الخَالِدِيّ</div>
+                </div>
+            </div>
+
+            <!-- Verification & Registry ID -->
+            <div class="cert-meta-code">
+                رَقْمُ السِّجِلِّ الرَّقْمِيِّ المُوَثَّقِ: {{ cert.certificate_id }}
+            </div>
+        </div>
+
+        <!-- Action Controls -->
+        <div class="cert-actions">
+            <button class="btn btn-gold" onclick="window.print()" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">
+                <span class="material-icons-round">print</span>
+                طِبَاعَةُ الصَّكِّ الأَكَادِيمِيِّ
+            </button>
+            <a href="{% url 'enrollments:my_courses' %}" class="btn btn-primary" style="padding: 0.85rem 2rem; font-size: 1.05rem;">
+                <span class="material-icons-round">arrow_back</span>
+                العَوْدَةُ لِسِجِلِّ مَسَاقَاتِي
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

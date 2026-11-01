@@ -1,0 +1,169 @@
+/* ============================================================
+   Edu-Plat Admin — Custom Unfold Overrides
+   Brand Palette: Chestnut | Khaki | Aztec Gold | Tea Green | Ebony
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0');
+
+/* --- Material Symbols: render as icons, not text --- */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* --- Global Font --- */
+*, body, input, button, select, textarea, label, th, td {
+  font-family: 'Outfit', sans-serif !important;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+/* Sidebar nav item active / hover state */
+aside nav li a:hover,
+aside nav li a[aria-current="page"],
+aside nav li a.active {
+  background: rgba(205, 155, 89, 0.15) !important;
+  border-left: 3px solid #CD9B59 !important;
+  color: #EDE490 !important;
+}
+
+aside nav li a {
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease !important;
+}
+
+/* Section titles in sidebar */
+aside nav .navigation-title,
+aside nav h3 {
+  color: rgba(237, 228, 144, 0.5) !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.5px !important;
+}
+
+/* ============================================================
+   TOPBAR / BREADCRUMBS
+   ============================================================ */
+header .breadcrumbs a,
+.breadcrumb a {
+  color: #CD9B59 !important;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+/* Primary save button */
+.button, input[type="submit"].default,
+.submit-row input[type="submit"],
+button[type="submit"] {
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+
+/* ============================================================
+   CHANGELIST TABLE
+   ============================================================ */
+#result_list thead th,
+table thead th {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.6px !important;
+}
+
+#result_list tbody tr:hover td,
+table tbody tr:hover td {
+  background: rgba(205, 155, 89, 0.05) !important;
+}
+
+/* ============================================================
+   FORM FIELDS
+   ============================================================ */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="url"]:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(150, 63, 46, 0.15) !important;
+}
+
+/* ============================================================
+   FIELDSET / MODULE HEADERS
+   ============================================================ */
+fieldset > legend,
+.module caption,
+fieldset h2 {
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  border-radius: 8px 8px 0 0 !important;
+}
+
+/* ============================================================
+   INLINE GROUPS
+   ============================================================ */
+.inline-group > h2 {
+  border-radius: 8px 8px 0 0 !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+}
+
+/* ============================================================
+   ALERT / MESSAGE BANNERS
+   ============================================================ */
+.messagelist li.success {
+  border-left: 4px solid #56694F !important;
+}
+.messagelist li.error {
+  border-left: 4px solid #963F2E !important;
+}
+.messagelist li.warning {
+  border-left: 4px solid #CD9B59 !important;
+}
+
+/* ============================================================
+   PAGINATION
+   ============================================================ */
+.paginator .this-page {
+  font-weight: 700 !important;
+}
+
+/* ============================================================
+   FILTER SIDEBAR
+   ============================================================ */
+#changelist-filter h2 {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  border-radius: 8px 8px 0 0 !important;
+}
+
+/* ============================================================
+   SEARCH BAR
+   ============================================================ */
+#toolbar input[type="text"],
+input#searchbar {
+  border-radius: 30px !important;
+}

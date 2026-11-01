@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>امتحان مقدمة في الحاسبات - HICMIS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;800&display=swap');
+
+  :root {
+    --bg-primary: #0a0e1a;
+    --bg-secondary: #111827;
+    --bg-card: #1a2235;
+    --bg-card-hover: #1f2a42;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --accent-green: #10b981;
+    --accent-red: #ef4444;
+    --accent-yellow: #f59e0b;
+    --accent-purple: #8b5cf6;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border: #1e3a5f;
+    --border-light: #2d4a6e;
+    --glow-blue: 0 0 20px rgba(59,130,246,0.3);
+    --glow-green: 0 0 20px rgba(16,185,129,0.3);
+    --glow-red: 0 0 20px rgba(239,68,68,0.3);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  body {
+    font-family:'Cairo','Tajawal',sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height:100vh;
+    overflow-x:hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(59,130,246,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(139,92,246,0.05) 0%, transparent 60%);
+  }
+
+  /* ===== SCREENS ===== */
+  .screen { display:none; min-height:100vh; }
+  .screen.active { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+
+  /* ===== PARTICLES ===== */
+  .particles {
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    pointer-events:none; z-index:0; overflow:hidden;
+  }
+  .particle {
+    position:absolute; width:2px; height:2px; border-radius:50%;
+    background: var(--accent-blue); opacity:0.4;
+    animation: float linear infinite;
+  }
+  @keyframes float {
+    0% { transform:translateY(100vh) translateX(0); opacity:0; }
+    10% { opacity:0.4; }
+    90% { opacity:0.4; }
+    100% { transform:translateY(-100px) translateX(30px); opacity:0; }
+  }
+
+  /* ===== START SCREEN ===== */
+  #startScreen {
+    background: linear-gradient(135deg, #0a0e1a 0%, #111827 100%);
+    position:relative;
+    z-index:1;
+  }
+
+  .start-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 48px 40px;
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5), var(--glow-blue);
+    position: relative;
+    z-index:2;
+    animation: slideUp 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  @keyframes slideUp {
+    from { transform:translateY(40px); opacity:0; }
+    to { transform:translateY(0); opacity:1; }
+  }
+
+  .logo-area {
+    display:flex; flex-direction:column; align-items:center; gap:12px; margin-bottom:32px;
+  }
+
+  .logo-icon {
+    width:70px; height:70px; border-radius:50%;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    display:flex; align-items:center; justify-content:center;
+    font-size:32px;
+    box-shadow: var(--glow-blue);
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 20px rgba(59,130,246,0.3); }
+    50% { box-shadow: 0 0 40px rgba(59,130,246,0.6); }
+  }
+
+  .logo-title { font-size:13px; color:var(--accent-cyan); letter-spacing:3px; font-weight:600; text-transform:uppercase; }
+
+  .exam-title {
+    font-size:26px; font-weight:900; color:var(--text-primary);
+    line-height:1.3; margin-bottom:8px;
+  }
+
+  .exam-subtitle { font-size:14px; color:var(--text-secondary); margin-bottom:32px; }
+
+  .stats-row {
+    display:flex; justify-content:center; gap:20px; margin-bottom:32px; flex-wrap:wrap;
+  }
+
+  .stat-chip {
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius:50px; padding:8px 16px;
+    font-size:13px; color:var(--accent-blue); font-weight:600;
+    display:flex; align-items:center; gap:6px;
+  }
+
+  .input-group { margin-bottom:24px; text-align:right; }
+  .input-label { font-size:14px; color:var(--text-secondary); margin-bottom:8px; display:block; }
+
+  .name-input {
+    width:100%; padding:14px 18px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family:'Cairo',sans-serif;
+    font-size:16px; direction:rtl;
+    transition: var(--transition);
+    outline:none;
+  }
+
+  .name-input:focus { border-color: var(--accent-blue); box-shadow: var(--glow-blue); }
+  .name-input::placeholder { color:var(--text-muted); }
+
+  .timer-select-group { margin-bottom:28px; text-align:right; }
+  .timer-options { display:flex; gap:10px; flex-wrap:wrap; }
+  .timer-option {
+    flex:1; min-width:80px; padding:10px 8px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-family:'Cairo',sans-serif;
+    font-size:13px; cursor:pointer;
+    transition: var(--transition); text-align:center;
+  }
+  .timer-option:hover, .timer-option.selected {
+    border-color: var(--accent-blue); color:var(--accent-blue);
+    background: rgba(59,130,246,0.1);
+  }
+
+  .start-btn {
+    width:100%; padding:16px;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    border:none; border-radius: var(--radius-sm);
+    color:#fff; font-family:'Cairo',sans-serif;
+    font-size:18px; font-weight:700; cursor:pointer;
+    transition: var(--transition);
+    box-shadow: var(--glow-blue);
+  }
+
+  .start-btn:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(59,130,246,0.5); }
+  .start-btn:active { transform:translateY(0); }
+
+  /* ===== EXAM SCREEN ===== */
+  #examScreen { padding:0; justify-content:flex-start; background:var(--bg-primary); }
+
+  .exam-header {
+    width:100%; background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding:14px 20px; position:sticky; top:0; z-index:100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .header-top {
+    display:flex; justify-content:space-between; align-items:center;
+    max-width:860px; margin:0 auto;
+  }
+
+  .student-name-badge {
+    display:flex; align-items:center; gap:8px;
+    background: rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3);
+    border-radius:50px; padding:6px 14px;
+    font-size:13px; color:var(--accent-blue); font-weight:600;
+  }
+
+  .timer-display {
+    display:flex; align-items:center; gap:8px;
+    padding:8px 16px; border-radius:50px;
+    background: rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3);
+    font-size:20px; font-weight:700; color:var(--accent-green);
+    font-variant-numeric:tabular-nums; transition: var(--transition);
+    min-width:110px; justify-content:center;
+  }
+
+  .timer-display.warning {
+    background: rgba(245,158,11,0.1); border-color:rgba(245,158,11,0.3);
+    color:var(--accent-yellow);
+  }
+
+  .timer-display.danger {
+    background: rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.5);
+    color:var(--accent-red); animation:timerPulse 0.5s ease-in-out infinite;
+  }
+
+  @keyframes timerPulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
+
+  .progress-area {
+    max-width:860px; margin:10px auto 0;
+    display:flex; align-items:center; gap:12px;
+  }
+
+  .progress-bar {
+    flex:1; height:6px; background: var(--bg-card);
+    border-radius:10px; overflow:hidden;
+  }
+
+  .progress-fill {
+    height:100%; background:linear-gradient(90deg,var(--accent-blue),var(--accent-cyan));
+    border-radius:10px; transition: width 0.4s ease;
+  }
+
+  .progress-text { font-size:13px; color:var(--text-secondary); white-space:nowrap; font-weight:600; }
+
+  /* ===== QUESTION CARD ===== */
+  .exam-body {
+    flex:1; width:100%; max-width:860px; margin:0 auto;
+    padding:24px 20px 100px;
+  }
+
+  .question-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding:28px;
+    margin-bottom:20px;
+    animation: fadeInCard 0.35s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  @keyframes fadeInCard {
+    from { opacity:0; transform:translateY(16px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .question-meta {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:16px;
+  }
+
+  .question-num {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    font-size:13px; font-weight:700; letter-spacing:1px;
+  }
+
+  .question-type-badge {
+    padding:4px 12px; border-radius:50px; font-size:11px; font-weight:600;
+    letter-spacing:0.5px;
+  }
+
+  .badge-mcq { background:rgba(139,92,246,0.15); color:var(--accent-purple); border:1px solid rgba(139,92,246,0.3); }
+  .badge-tf { background:rgba(6,182,212,0.15); color:var(--accent-cyan); border:1px solid rgba(6,182,212,0.3); }
+
+  .question-text {
+    font-size:17px; font-weight:600; line-height:1.7;
+    color:var(--text-primary); margin-bottom:22px;
+  }
+
+  /* ===== OPTIONS ===== */
+  .options-grid { display:flex; flex-direction:column; gap:10px; }
+
+  .option-btn {
+    display:flex; align-items:center; gap:14px;
+    padding:14px 18px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor:pointer; transition: var(--transition);
+    text-align:right; direction:rtl;
+    font-family:'Cairo',sans-serif;
+    font-size:15px; color:var(--text-primary);
+    position:relative; overflow:hidden;
+  }
+
+  .option-btn::before {
+    content:''; position:absolute; left:0; top:0; bottom:0;
+    width:0; background:linear-gradient(90deg,rgba(59,130,246,0.1),transparent);
+    transition: width 0.3s ease;
+  }
+
+  .option-btn:hover { border-color:var(--accent-blue); transform:translateX(-3px); box-shadow:var(--glow-blue); }
+  .option-btn:hover::before { width:100%; }
+
+  .option-btn.selected { border-color:var(--accent-blue); background:rgba(59,130,246,0.15); }
+  .option-btn.correct { border-color:var(--accent-green); background:rgba(16,185,129,0.15); color:var(--accent-green); box-shadow:var(--glow-green); }
+  .option-btn.wrong { border-color:var(--accent-red); background:rgba(239,68,68,0.15); color:var(--accent-red); box-shadow:var(--glow-red); }
+
+  .option-letter {
+    width:32px; height:32px; min-width:32px;
+    border-radius:50%; border:2px solid var(--border-light);
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:700; color:var(--text-muted);
+    transition: var(--transition);
+  }
+
+  .option-btn:hover .option-letter { border-color:var(--accent-blue); color:var(--accent-blue); }
+  .option-btn.correct .option-letter { border-color:var(--accent-green); color:var(--accent-green); background:rgba(16,185,129,0.2); }
+  .option-btn.wrong .option-letter { border-color:var(--accent-red); color:var(--accent-red); background:rgba(239,68,68,0.2); }
+
+  .option-text { flex:1; line-height:1.5; }
+
+  /* ===== NAV BUTTONS ===== */
+  .nav-bar {
+    position:fixed; bottom:0; left:0; right:0;
+    background: var(--bg-secondary);
+    border-top:1px solid var(--border);
+    padding:14px 20px;
+    display:flex; justify-content:center; align-items:center; gap:12px;
+    z-index:100; box-shadow: 0 -8px 24px rgba(0,0,0,0.4);
+  }
+
+  .nav-bar > * { max-width:860px; }
+
+  .nav-inner { display:flex; gap:12px; width:100%; max-width:860px; }
+
+  .nav-btn {
+    flex:1; padding:13px 20px;
+    border:none; border-radius: var(--radius-sm);
+    font-family:'Cairo',sans-serif; font-size:15px; font-weight:700;
+    cursor:pointer; transition: var(--transition);
+  }
+
+  .btn-next {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    color:#fff; box-shadow:var(--glow-blue);
+  }
+
+  .btn-next:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(59,130,246,0.5); }
+  .btn-next:active { transform:translateY(0); }
+  .btn-next:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+
+  .btn-finish {
+    background: linear-gradient(135deg, var(--accent-green), #059669);
+    color:#fff; box-shadow:var(--glow-green);
+  }
+
+  .btn-finish:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(16,185,129,0.5); }
+
+  /* ===== RESULT SCREEN ===== */
+  #resultScreen { background:var(--bg-primary); padding:20px; }
+
+  .result-card {
+    background: var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:24px; padding:36px 28px;
+    max-width:700px; width:100%; text-align:center;
+    box-shadow:0 25px 60px rgba(0,0,0,0.5);
+    animation: slideUp 0.6s ease;
+    margin-bottom:24px;
+  }
+
+  .grade-circle {
+    width:140px; height:140px; border-radius:50%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    margin:0 auto 24px;
+    border:4px solid; position:relative;
+  }
+
+  .grade-circle::after {
+    content:''; position:absolute; inset:-8px; border-radius:50%;
+    border:2px dashed; opacity:0.3;
+  }
+
+  .grade-circle.excellent { border-color:var(--accent-green); color:var(--accent-green); box-shadow:var(--glow-green); }
+  .grade-circle.excellent::after { border-color:var(--accent-green); }
+  .grade-circle.very-good { border-color:var(--accent-blue); color:var(--accent-blue); box-shadow:var(--glow-blue); }
+  .grade-circle.very-good::after { border-color:var(--accent-blue); }
+  .grade-circle.good { border-color:var(--accent-cyan); color:var(--accent-cyan); }
+  .grade-circle.good::after { border-color:var(--accent-cyan); }
+  .grade-circle.pass { border-color:var(--accent-yellow); color:var(--accent-yellow); }
+  .grade-circle.pass::after { border-color:var(--accent-yellow); }
+  .grade-circle.fail { border-color:var(--accent-red); color:var(--accent-red); box-shadow:var(--glow-red); }
+  .grade-circle.fail::after { border-color:var(--accent-red); }
+
+  .grade-percent { font-size:38px; font-weight:900; }
+  .grade-label { font-size:12px; font-weight:600; letter-spacing:1px; opacity:0.8; }
+
+  .grade-title { font-size:28px; font-weight:900; margin-bottom:6px; }
+  .grade-subtitle { font-size:14px; color:var(--text-secondary); margin-bottom:28px; }
+
+  .result-stats {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:28px;
+  }
+
+  .result-stat {
+    background: var(--bg-secondary); border-radius:12px; padding:16px 12px;
+    border:1px solid var(--border);
+  }
+
+  .result-stat-val { font-size:24px; font-weight:900; margin-bottom:4px; }
+  .result-stat-label { font-size:12px; color:var(--text-secondary); }
+  .stat-correct .result-stat-val { color:var(--accent-green); }
+  .stat-wrong .result-stat-val { color:var(--accent-red); }
+  .stat-total .result-stat-val { color:var(--accent-blue); }
+
+  .action-btns { display:flex; gap:12px; flex-wrap:wrap; }
+
+  .action-btn {
+    flex:1; min-width:120px; padding:13px 16px;
+    border:none; border-radius:var(--radius-sm);
+    font-family:'Cairo',sans-serif; font-size:14px; font-weight:700;
+    cursor:pointer; transition: var(--transition);
+  }
+
+  .btn-review {
+    background:rgba(139,92,246,0.2); color:var(--accent-purple);
+    border:1px solid rgba(139,92,246,0.4);
+  }
+
+  .btn-review:hover { background:rgba(139,92,246,0.35); }
+
+  .btn-restart {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+    color:#fff; box-shadow:var(--glow-blue);
+  }
+
+  .btn-restart:hover { transform:translateY(-2px); }
+
+  /* ===== REVIEW SECTION ===== */
+  .review-section {
+    max-width:700px; width:100%;
+  }
+
+  .review-title {
+    font-size:20px; font-weight:800; margin-bottom:16px;
+    display:flex; align-items:center; gap:10px;
+  }
+
+  .review-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius:16px; padding:22px;
+    margin-bottom:14px;
+    border-right: 4px solid var(--accent-red);
+    animation: fadeInCard 0.3s ease;
+  }
+
+  .review-q { font-size:15px; font-weight:700; margin-bottom:14px; line-height:1.6; }
+
+  .review-answer {
+    display:flex; align-items:flex-start; gap:10px;
+    padding:10px 14px; border-radius:8px; margin-bottom:8px;
+    font-size:14px; line-height:1.5;
+  }
+
+  .review-wrong { background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.25); color:var(--accent-red); }
+  .review-correct { background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.25); color:var(--accent-green); }
+
+  .review-icon { font-size:16px; margin-top:1px; }
+
+  /* ===== ALERT OVERLAY ===== */
+  .alert-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.8);
+    display:none; align-items:center; justify-content:center;
+    z-index:999; padding:20px;
+  }
+
+  .alert-overlay.show { display:flex; animation:fadeIn 0.2s ease; }
+
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+  .alert-box {
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:20px; padding:36px 28px; max-width:400px; width:100%;
+    text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.6);
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  @keyframes popIn {
+    from { transform:scale(0.85); opacity:0; }
+    to { transform:scale(1); opacity:1; }
+  }
+
+  .alert-icon { font-size:48px; margin-bottom:16px; }
+  .alert-title { font-size:20px; font-weight:800; margin-bottom:8px; }
+  .alert-msg { font-size:14px; color:var(--text-secondary); margin-bottom:24px; }
+
+  .alert-btns { display:flex; gap:12px; }
+  .alert-btn {
+    flex:1; padding:12px; border:none; border-radius:var(--radius-sm);
+    font-family:'Cairo',sans-serif; font-size:15px; font-weight:700;
+    cursor:pointer; transition: var(--transition);
+  }
+
+  .alert-cancel { background:var(--bg-secondary); color:var(--text-secondary); border:1px solid var(--border); }
+  .alert-confirm { background:linear-gradient(135deg,var(--accent-blue),var(--accent-cyan)); color:#fff; }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width:600px) {
+    .start-card { padding:32px 20px; }
+    .exam-title { font-size:20px; }
+    .result-stats { grid-template-columns:repeat(3,1fr); }
+    .question-text { font-size:15px; }
+    .option-btn { font-size:14px; padding:12px 14px; }
+    .result-card { padding:28px 20px; }
+    .grade-circle { width:120px; height:120px; }
+    .grade-percent { font-size:32px; }
+  }
+
+  /* ===== ANSWERED INDICATOR ===== */
+  .answered-indicator {
+    display:flex; align-items:center; gap:6px;
+    font-size:13px; color:var(--accent-green);
+    animation: fadeIn 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<!-- ===== START SCREEN ===== -->
+<div class="screen active" id="startScreen">
+  <div class="start-card">
+    <div class="logo-area">
+      <div class="logo-icon">🎓</div>
+      <div class="logo-title">HICMIS • 2025-2026</div>
+    </div>
+    <h1 class="exam-title">امتحان مقدمة في الحاسبات</h1>
+    <p class="exam-subtitle">د. عبير عصمت علي • م. محمد أشرف بهجت</p>
+    <div class="stats-row">
+      <div class="stat-chip">📝 <span id="totalQCount">0</span> سؤال</div>
+      <div class="stat-chip">🎯 اختيار متعدد + صح/خطأ</div>
+    </div>
+
+    <div class="input-group">
+      <label class="input-label" for="studentName">👤 اسم الطالب</label>
+      <input type="text" id="studentName" class="name-input" placeholder="أدخل اسمك بالكامل..." />
+    </div>
+
+    <div class="timer-select-group">
+      <label class="input-label">⏱️ مدة الامتحان</label>
+      <div class="timer-options">
+        <div class="timer-option" data-minutes="30">30 دقيقة</div>
+        <div class="timer-option selected" data-minutes="60">60 دقيقة</div>
+        <div class="timer-option" data-minutes="90">90 دقيقة</div>
+        <div class="timer-option" data-minutes="120">120 دقيقة</div>
+      </div>
+    </div>
+
+    <button class="start-btn" onclick="startExam()">🚀 ابدأ الامتحان</button>
+  </div>
+</div>
+
+<!-- ===== EXAM SCREEN ===== -->
+<div class="screen" id="examScreen">
+  <div class="exam-header">
+    <div class="header-top">
+      <div class="student-name-badge">👤 <span id="headerName">—</span></div>
+      <div class="timer-display" id="timerDisplay">⏱️ 60:00</div>
+    </div>
+    <div class="progress-area">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-text" id="progressText">1 / 0</div>
+    </div>
+  </div>
+
+  <div class="exam-body" id="examBody"></div>
+
+  <div class="nav-bar">
+    <div class="nav-inner">
+      <button class="nav-btn btn-next" id="nextBtn" onclick="nextQuestion()">التالي ← </button>
+      <button class="nav-btn btn-finish" id="finishBtn" style="display:none" onclick="showFinishAlert()">إنهاء الامتحان ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RESULT SCREEN ===== -->
+<div class="screen" id="resultScreen"></div>
+
+<!-- ===== ALERT OVERLAY ===== -->
+<div class="alert-overlay" id="alertOverlay">
+  <div class="alert-box">
+    <div class="alert-icon">⚠️</div>
+    <div class="alert-title" id="alertTitle">إنهاء الامتحان</div>
+    <div class="alert-msg" id="alertMsg">هل أنت متأكد من إنهاء الامتحان؟</div>
+    <div class="alert-btns">
+      <button class="alert-btn alert-cancel" onclick="closeAlert()">إلغاء</button>
+      <button class="alert-btn alert-confirm" onclick="finishExam()">تأكيد</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== AUDIO CONTEXT ===== -->
+<script>
+// =============================================
+// ALL QUESTIONS DATA
+// =============================================
+const ALL_QUESTIONS = [
+  // ===== MCQ from PDF =====
+  {type:'mcq', q:'ما المقصود بمعالجة المعلومات؟', options:['تخزين البيانات فقط','تحويل البيانات إلى معلومات مفيدة','إدخال البيانات فقط','حذف البيانات'], answer:1},
+  {type:'mcq', q:'أي مما يلي يمثل نوع من أنواع المعالجة؟', options:['المعالجة اليدوية','المعالجة الميكانيكية','المعالجة الإلكترونية','جميع ما سبق'], answer:3},
+  {type:'mcq', q:'المعالجة اليدوية تعتمد على:', options:['الحاسب الآلي','الإنسان فقط','الأجهزة الإلكترونية','الإنترنت'], answer:1},
+  {type:'mcq', q:'المعالجة الميكانيكية تستخدم:', options:['الإنسان فقط','أدوات وأجهزة بسيطة','الذكاء الاصطناعي','البرمجيات فقط'], answer:1},
+  {type:'mcq', q:'المعالجة الإلكترونية تعتمد على:', options:['الإنسان فقط','الورق والقلم','الحاسب والبرمجيات','الآلات اليدوية'], answer:2},
+  {type:'mcq', q:'أي مرحلة يتم فيها إدخال البيانات إلى النظام؟', options:['الإدخال','المعالجة','الإخراج','التخزين'], answer:0},
+  {type:'mcq', q:'ما المقصود بالبيانات؟', options:['معلومات تم تحليلها','حقائق خام غير معالجة','نتائج نهائية','قرارات إدارية'], answer:1},
+  {type:'mcq', q:'المعلومات هي:', options:['بيانات غير مفيدة','بيانات تم معالجتها وأصبحت ذات معنى','أرقام فقط','مدخلات النظام'], answer:1},
+  {type:'mcq', q:'أول مرحلة في دورة معالجة المعلومات هي:', options:['المعالجة','التخزين','الإدخال','الإخراج'], answer:2},
+  {type:'mcq', q:'أي مما يلي يمثل مكون من مكونات نظام معالجة المعلومات؟', options:['الأجهزة فقط','البرمجيات فقط','البيانات والأجهزة والبرمجيات','المستخدم فقط'], answer:2},
+  {type:'mcq', q:'دور الذكاء الاصطناعي في معالجة المعلومات هو:', options:['إلغاء البيانات','تحسين تحليل البيانات واتخاذ القرار','تخزين البيانات فقط','إدخال البيانات'], answer:1},
+  {type:'mcq', q:'تحويل البيانات إلى معلومات يتم في مرحلة:', options:['الإدخال','المعالجة','الإخراج','التخزين'], answer:1},
+  {type:'mcq', q:'ما هو التعريف الصحيح للبيانات؟', options:['معلومات تم تحليلها وتفسيرها','حقائق خام غير معالجة','نتائج عمليات المعالجة','قرارات مبنية على التحليل'], answer:1},
+  {type:'mcq', q:'أي من التالي يعتبر مثالاً على المعلومات؟', options:['أرقام درجات الطلاب الخام','قائمة بأسماء الموظفين','تقرير يوضح نسبة النجاح في الفصل','تواريخ الميلاد'], answer:2},
+  {type:'mcq', q:'كم عدد مراحل دورة معالجة المعلومات الأساسية؟', options:['3 مراحل','4 مراحل','5 مراحل','6 مراحل'], answer:1},
+  {type:'mcq', q:'أي من التالي ليس من مكونات نظام معالجة المعلومات؟', options:['الأجهزة (Hardware)','البرمجيات (Software)','الشبكات (Networks)','السياسات الحكومية'], answer:3},
+  {type:'mcq', q:'ما هي المرحلة الأولى في دورة معالجة المعلومات؟', options:['التخزين','المعالجة','الإدخال','الإخراج'], answer:2},
+  {type:'mcq', q:'أي نوع من المعالجة يعتمد على استخدام الآلات الحاسبة الميكانيكية؟', options:['المعالجة اليدوية','المعالجة الميكانيكية','المعالجة الإلكترونية','المعالجة الرقمية'], answer:1},
+  {type:'mcq', q:'ما هو المكون المسؤول عن تنفيذ العمليات الحسابية والمنطقية في الحاسب؟', options:['الذاكرة','وحدة الإدخال','وحدة المعالجة المركزية (CPU)','وحدة التخزين'], answer:2},
+  {type:'mcq', q:'أي من التالي يعتبر وسيط تخزين دائم؟', options:['RAM','Cache','Hard Disk','Register'], answer:2},
+  {type:'mcq', q:'ما هو النظام العددي الذي يستخدمه الحاسب للتمثيل الداخلي للبيانات؟', options:['النظام العشري','النظام الثنائي','النظام الثماني','النظام السادس عشر'], answer:1},
+  {type:'mcq', q:'ما هو الأساس في النظام الثنائي؟', options:['8','10','2','16'], answer:2},
+  {type:'mcq', q:'أي من التالي يمثل الرقم 13 في النظام الثنائي؟', options:['1010','1101','1110','1011'], answer:1},
+  {type:'mcq', q:'ما هي وظيفة شبكات نقل البيانات؟', options:['تخزين البيانات فقط','معالجة البيانات فقط','نقل البيانات بين الأجهزة','عرض البيانات فقط'], answer:2},
+  {type:'mcq', q:'أي من التالي يعتبر من وسائط النقل السلكية؟', options:['Wi-Fi','Bluetooth','الألياف الضوئية','الأقمار الصناعية'], answer:2},
+  {type:'mcq', q:'ما هي طوبولوجيا الشبكة التي تتصل فيها جميع الأجهزة بنقطة مركزية؟', options:['النجمة (Star)','الحلقة (Ring)','الخطية (Bus)','الشبكية (Mesh)'], answer:0},
+  {type:'mcq', q:'أي من التالي يعد من فوائد شبكات نقل البيانات؟', options:['مشاركة الموارد','زيادة التكلفة','صعوبة التواصل','بطء الأداء'], answer:0},
+  {type:'mcq', q:'ما هو الفرق الرئيسي بين البيانات والمعلومات؟', options:['البيانات خام والمعلومات معالجة','البيانات معالجة والمعلومات خام','كلاهما نفس الشيء','البيانات رقمية والمعلومات تناظرية'], answer:0},
+  {type:'mcq', q:'أي من التالي يمثل مثالاً على المعالجة الإلكترونية؟', options:['حساب المجموع باستخدام العداد','كتابة تقرير باليد','استخدام برنامج Excel لتحليل البيانات','تنظيم الملفات في درج'], answer:2},
+  {type:'mcq', q:'ما هو المكون الذي يقوم بإدخال البيانات إلى الحاسب؟', options:['الشاشة','الطابعة','لوحة المفاتيح','السماعات'], answer:2},
+  {type:'mcq', q:'أي من التالي يعتبر من أنواع نظم المعالجة الإلكترونية؟', options:['المعالجة المركزية','المعالجة اللامركزية','المعالجة التفاعلية (Online Processing)','المعالجة التناظرية'], answer:2},
+  {type:'mcq', q:'ما هو الرقم 10 في النظام الثماني؟', options:['10','12','8','16'], answer:1},
+  {type:'mcq', q:'ما هو سبب استخدام الحاسب للنظام الثنائي؟', options:['سهولة التحويل إلى عشري','التوافق مع الدوائر الكهربائية (ON/OFF)','سرعة المعالجة','دقة التخزين'], answer:1},
+  {type:'mcq', q:'أي من التالي يعتبر من مخرجات نظام معالجة المعلومات؟', options:['قاعدة البيانات','التقارير والرسوم البيانية','البرامج','وحدات الإدخال'], answer:1},
+  {type:'mcq', q:'ما هي وظيفة الذاكرة الرئيسية (RAM)؟', options:['تخزين البيانات بشكل دائم','تخزين البيانات والبرامج مؤقتاً أثناء التشغيل','إجراء العمليات الحسابية','التحكم في وحدات الإدخال'], answer:1},
+  {type:'mcq', q:'أي من التالي هو بروتوكول نقل البيانات على الإنترنت؟', options:['HTTP','CPU','USB','HDMI'], answer:0},
+  {type:'mcq', q:'ما هو النطاق الجغرافي لشبكة LAN؟', options:['عالمي','مدينة بأكملها','مبنى واحد أو منطقة محدودة','قارة'], answer:2},
+  {type:'mcq', q:'أي من التالي يعتبر من تطبيقات الذكاء الاصطناعي في معالجة المعلومات؟', options:['الآلة الحاسبة','برامج معالجة النصوص','أنظمة التوصية (Recommendation Systems)','جداول البيانات'], answer:2},
+  {type:'mcq', q:'ما هو الرقم 15 في النظام السادس عشر؟', options:['E','F','15','10'], answer:1},
+  {type:'mcq', q:'أي من التالي يعتبر من وسائط النقل اللاسلكية؟', options:['الكابل المحوري','الألياف الضوئية','الأشعة تحت الحمراء','الزوج المجدول'], answer:2},
+  {type:'mcq', q:'ما هي طوبولوجيا الشبكة التي تتصل فيها الأجهزة في حلقة مغلقة؟', options:['النجمة','الحلقة','الخطية','الشجرة'], answer:1},
+  {type:'mcq', q:'أي من التالي يعتبر من مكونات نظام المعالجة الإلكترونية؟', options:['البيانات','الإجراءات','الأجهزة','جميع ما سبق'], answer:3},
+  {type:'mcq', q:'ما هو الرقم الثنائي 1010 في النظام العشري؟', options:['8','9','10','11'], answer:2},
+  {type:'mcq', q:'أي من التالي يمثل مرحلة التخزين في دورة معالجة المعلومات؟', options:['حفظ البيانات على القرص الصلب','إدخال البيانات عبر لوحة المفاتيح','عرض النتائج على الشاشة','إجراء العمليات الحسابية'], answer:0},
+  {type:'mcq', q:'ما هي المعالجة اليدوية؟', options:['استخدام الحاسب الآلي','استخدام الآلات الحاسبة','الاعتماد على الجهد البشري دون آلات','استخدام الشبكات'], answer:2},
+  {type:'mcq', q:'أي من التالي يعد من أنواع نظم المعالجة حسب الوقت؟', options:['المعالجة الفورية (Real-time)','المعالجة البطيئة','المعالجة المتقطعة','المعالجة العشوائية'], answer:0},
+  {type:'mcq', q:'ما هو الغرض من بروتوكولات الشبكات؟', options:['لتوحيد طريقة الاتصال بين الأجهزة','لزيادة سرعة المعالج','لتخزين البيانات','لعرض الصور'], answer:0},
+  {type:'mcq', q:'أي من التالي يمثل مثالاً على وسيط تخزين ثانوي؟', options:['RAM','ROM','SSD','Cache'], answer:2},
+  {type:'mcq', q:'ما هو الرقم العشري 25 في النظام الثنائي؟', options:['11001','11100','10111','10011'], answer:0},
+  {type:'mcq', q:'أي من التالي يعتبر من تطبيقات الذكاء الاصطناعي في معالجة اللغة؟', options:['برامج الترجمة الآلية','برامج الرسم','قواعد البيانات','أنظمة التشغيل'], answer:0},
+  {type:'mcq', q:'ما هي الميزة الرئيسية للمعالجة الإلكترونية مقارنة باليدوية؟', options:['السرعة والدقة','التكلفة المنخفضة','البساطة','عدم الحاجة للطاقة'], answer:0},
+  {type:'mcq', q:'أي من التالي يمثل أحد عناصر نظام نقل البيانات؟', options:['المرسل','المستقبل','وسيط النقل','جميع ما سبق'], answer:3},
+  {type:'mcq', q:'ما هو الرقم الثنائي 1111 في النظام العشري؟', options:['14','15','16','17'], answer:1},
+  {type:'mcq', q:'أي من التالي يعتبر من طوبولوجيا الشبكات؟', options:['النجمة','الدائرة','المربع','المثلث'], answer:0},
+  {type:'mcq', q:'ما هو الفرق بين المعالجة الميكانيكية والإلكترونية؟', options:['الميكانيكية تستخدم أجزاء متحركة والإلكترونية تستخدم دوائر إلكترونية','لا فرق بينهما','الميكانيكية أسرع','الإلكترونية أقدم'], answer:0},
+  {type:'mcq', q:'أي من التالي يعتبر من مخرجات الحاسب؟', options:['الفأرة','لوحة المفاتيح','الماسح الضوئي','الطابعة'], answer:3},
+  {type:'mcq', q:'ما هو النظام العددي الذي يستخدم الأرقام من 0 إلى 9 والحروف A إلى F؟', options:['الثنائي','الثماني','العشري','السادس عشر'], answer:3},
+  {type:'mcq', q:'أي من التالي يمثل مثالاً على المعالجة بالدفعة (Batch Processing)؟', options:['تحديث الرصيد البنكي فوراً','معالجة فواتير الكهرباء في نهاية الشهر','الدردشة الفورية','ألعاب الفيديو'], answer:1},
+  {type:'mcq', q:'ما هو المكون الذي يقوم بتخزين التعليمات البرمجية بشكل دائم؟', options:['RAM','ROM','Cache','Register'], answer:1},
+  {type:'mcq', q:'أي من التالي يعتبر من وسائط النقل اللاسلكية قصيرة المدى؟', options:['Bluetooth','الألياف الضوئية','الكابل المحوري','WiMAX'], answer:0},
+  {type:'mcq', q:'ما هو الرقم الثماني 17 في النظام العشري؟', options:['14','15','16','17'], answer:1},
+  {type:'mcq', q:'أي من التالي يعتبر من تطبيقات الذكاء الاصطناعي في الرؤية الحاسوبية؟', options:['التعرف على الوجوه','معالجة النصوص','الجداول الإلكترونية','قواعد البيانات'], answer:0},
+  {type:'mcq', q:'ما هي الوحدة الأساسية لقياس البيانات في الحاسب؟', options:['بت (Bit)','بايت (Byte)','كيلوبايت','ميجابايت'], answer:0},
+  {type:'mcq', q:'أي من التالي يعتبر من مكونات وحدة المعالجة المركزية؟', options:['وحدة الحساب والمنطق (ALU)','الذاكرة العشوائية','القرص الصلب','الشاشة'], answer:0},
+  {type:'mcq', q:'ما هو الرقم العشري 8 في النظام الثنائي؟', options:['1000','1100','1010','1001'], answer:0},
+  {type:'mcq', q:'أي من التالي يمثل مرحلة الإخراج في دورة معالجة المعلومات؟', options:['حفظ التقرير على القرص','إدخال البيانات','عرض النتائج على الشاشة','معالجة البيانات'], answer:2},
+  {type:'mcq', q:'ما هو الغرض من نظام التشغيل (Operating System)؟', options:['إدارة موارد الحاسب وتشغيل التطبيقات','تحرير النصوص','تصميم الجرافيك','الاتصال بالإنترنت'], answer:0},
+  {type:'mcq', q:'أي من التالي يعتبر من أنواع الشبكات حسب النطاق الجغرافي؟', options:['LAN','WAN','MAN','جميع ما سبق'], answer:3},
+  {type:'mcq', q:'ما هو الرقم السادس عشر 1A في النظام العشري؟', options:['25','26','27','28'], answer:1},
+  {type:'mcq', q:'أي من التالي يعتبر من مزايا الشبكات؟', options:['مشاركة البيانات','توفير التكاليف','سهولة التواصل','جميع ما سبق'], answer:3},
+  {type:'mcq', q:'ما هي المرحلة التي تلي الإدخال في دورة المعالجة؟', options:['الإخراج','التخزين','المعالجة','التوزيع'], answer:2},
+  {type:'mcq', q:'أي من التالي يعتبر من البرمجيات التطبيقية؟', options:['Windows','Linux','Microsoft Word','BIOS'], answer:2},
+  {type:'mcq', q:'ما هو الرقم الثنائي 1100 في النظام العشري؟', options:['10','11','12','13'], answer:2},
+  {type:'mcq', q:'أي من التالي يمثل مثالاً على وسيط تخزين ضوئي؟', options:['القرص الصلب','القرص المدمج (CD)','الذاكرة الفلاشية','القرص المرن'], answer:1},
+  {type:'mcq', q:'ما هي وظيفة وحدة التحكم (Control Unit) في CPU؟', options:['إجراء العمليات الحسابية','تنفيذ التعليمات والتحكم في تدفق البيانات','تخزين البيانات','عرض النتائج'], answer:1},
+  {type:'mcq', q:'أي من التالي يعتبر من بروتوكولات الإنترنت؟', options:['TCP/IP','CPU','USB','HDMI'], answer:0},
+  {type:'mcq', q:'ما هو الرقم العشري 14 في النظام السادس عشر؟', options:['A','B','C','E'], answer:3},
+  {type:'mcq', q:'أي من التالي يعتبر من أمثلة المعالجة اللامركزية؟', options:['الحاسبات الشخصية المستقلة','الحواسيب المركزية الكبيرة','شبكات الحاسب الموزعة','جميع ما سبق'], answer:2},
+  {type:'mcq', q:'ما هو الفرق بين الذاكرة RAM وROM؟', options:['RAM قابلة للقراءة والكتابة، ROM للقراءة فقط','ROM قابلة للقراءة والكتابة، RAM للقراءة فقط','كلاهما متطابقان','RAM أسرع من ROM'], answer:0},
+  {type:'mcq', q:'أي من التالي يعتبر من وسائط النقل اللاسلكية البعيدة المدى؟', options:['الأقمار الصناعية','الأشعة تحت الحمراء','Bluetooth','الكابل المحوري'], answer:0},
+  {type:'mcq', q:'ما هو الرقم الثنائي 1011 في النظام العشري؟', options:['10','11','12','13'], answer:1},
+  {type:'mcq', q:'أي من التالي يعتبر من تطبيقات الذكاء الاصطناعي في مجال الصحة؟', options:['تشخيص الأمراض','برامج المحاسبة','قواعد بيانات المرضى','أنظمة إدارة المستشفيات'], answer:0},
+  {type:'mcq', q:'ما هي المرحلة الأخيرة في دورة معالجة المعلومات؟', options:['الإدخال','المعالجة','الإخراج','التخزين (يمكن أن تكون أخيرة أو مستمرة)'], answer:2},
+  {type:'mcq', q:'أي من التالي يمثل مثالاً على جهاز إدخال؟', options:['الطابعة','الشاشة','الماسح الضوئي','السماعات'], answer:2},
+  {type:'mcq', q:'ما هو الرقم العشري 7 في النظام الثنائي؟', options:['111','110','101','100'], answer:0},
+  {type:'mcq', q:'أي من التالي يعتبر من خصائص الذكاء الاصطناعي؟', options:['التعلم من البيانات','اتخاذ القرارات','التفاعل مع البيئة','جميع ما سبق'], answer:3},
+  {type:'mcq', q:'ما هي وحدة قياس سرعة المعالج؟', options:['جيجاهرتز (GHz)','جيجابايت (GB)','ميجابت في الثانية (Mbps)','دورة في الدقيقة (RPM)'], answer:0},
+
+  // ===== TRUE/FALSE from PDF =====
+  {type:'tf', q:'المعالجة اليدوية تعتمد على استخدام الحاسب الآلي.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'المعالجة الإلكترونية أسرع من المعالجة اليدوية.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'المعالجة الميكانيكية لا تستخدم أي أدوات.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'دورة معالجة المعلومات تشمل الإدخال والمعالجة والإخراج.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'البيانات تتحول إلى معلومات بعد المعالجة.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'المعالجة الإلكترونية أقل دقة من المعالجة اليدوية.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'البيانات هي معلومات تم تفسيرها.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'المعلومات تساعد في اتخاذ القرار.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'دورة معالجة المعلومات تتكون من الإدخال والمعالجة والإخراج فقط.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'البيانات الخام لا تكون مفيدة إلا بعد معالجتها.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الذكاء الاصطناعي ليس له دور في تحليل البيانات.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'المعالجة هي تحويل البيانات إلى معلومات مفيدة.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'البيانات هي معلومات تم معالجتها وتنظيمها.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'دورة معالجة المعلومات تتكون من أربع مراحل رئيسية: الإدخال، المعالجة، الإخراج، والتخزين.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'المعالجة اليدوية تعتمد على استخدام الحاسب الآلي.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'النظام الثنائي يستخدم الرقمين 0 و 1 فقط.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الذاكرة RAM تحتفظ بالبيانات حتى بعد إيقاف تشغيل الحاسب.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'شبكة LAN تغطي مساحة جغرافية واسعة مثل دولة بأكملها.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'الألياف الضوئية تستخدم الضوء لنقل البيانات.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'المعالجة الإلكترونية أبطأ من المعالجة اليدوية.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'البروتوكول هو مجموعة من القواعد التي تنظم الاتصال بين الأجهزة.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الرقم الثنائي 1010 يساوي 10 في النظام العشري.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الذكاء الاصطناعي يمكنه محاكاة بعض القدرات البشرية مثل التعلم واتخاذ القرارات.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'طوبولوجيا النجمة تعني أن جميع الأجهزة متصلة في حلقة مغلقة.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'البيانات تصبح معلومات بعد معالجتها وتنظيمها.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الحاسب يستخدم النظام العشري في عملياته الداخلية.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'وحدة المعالجة المركزية (CPU) تتكون من وحدة الحساب والمنطق ووحدة التحكم فقط.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'يمكن نقل البيانات عبر وسائط سلكية فقط.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'المعالجة بالدفعة (Batch Processing) تعالج البيانات فور ورودها.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'الرقم 9 في النظام الثماني يمثل الرقم 9 في العشري.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'الذاكرة ROM قابلة للقراءة فقط ولا يمكن تغيير محتواها بسهولة.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الإنترنت هو مثال على شبكة WAN.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الطابعة تعتبر من وحدات الإدخال.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'النظام السادس عشر يستخدم الأرقام من 0 إلى 15.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'في دورة معالجة المعلومات، يمكن أن يحدث التخزين في أي مرحلة.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'المعالجة الميكانيكية أقدم من المعالجة الإلكترونية.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'شبكة LAN أسرع عادة من شبكة WAN.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الرقم الثنائي 1111 يساوي 15 في العشري.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'نظام التشغيل هو برنامج تطبيقي.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'يمكن للذكاء الاصطناعي التعلم من البيانات دون برمجة صريحة لجميع الحالات.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'طوبولوجيا الحلقة تتطلب وجود جهاز مركزي.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'البيانات الخام لا تفيد في اتخاذ القرارات مباشرة.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الماسح الضوئي (Scanner) هو جهاز إخراج.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'النظام الثماني أساسه 8.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'في المعالجة اليدوية، يمكن استخدام الآلة الحاسبة.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'شبكة MAN تغطي مدينة بأكملها.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الرقم السادس عشر 1F يساوي 31 في العشري.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الذاكرة المؤقتة (Cache) أبطأ من RAM.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'بروتوكول TCP/IP يستخدم في الإنترنت.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'المعالجة الإلكترونية يمكنها معالجة كميات ضخمة من البيانات بسرعة.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'المعلومات هي البيانات بعد معالجتها وتحليلها.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الحاسب يستخدم النظام الثنائي لأنه سهل التحويل إلى عشري.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'يمكن توصيل أكثر من حاسب في شبكة لمشاركة الموارد.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الرقم الثنائي 1001 يساوي 8 في العشري.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'الذاكرة RAM هي ذاكرة تخزين دائم.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'طوبولوجيا النجمة أكثر تحملاً للأخطاء من طوبولوجيا الحلقة.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'البيانات هي المادة الخام، والمعلومات هي المنتج النهائي.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الذكاء الاصطناعي يهدف إلى جعل الآلات تفكر مثل البشر.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'النظام العشري أساسه 2.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'في دورة المعالجة، الإخراج هو المرحلة الأولى.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'الأقمار الصناعية تستخدم في شبكات WAN.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الرقم الثنائي 1101 يساوي 13 في العشري.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'وحدة التحكم (CU) مسؤولة عن تنفيذ العمليات الحسابية.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'المعالجة الميكانيكية تستخدم أجزاء ميكانيكية مثل التروس.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'شبكة LAN يمكن أن تكون لاسلكية (WLAN).', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الرقم العشري 10 يساوي A في النظام السادس عشر.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'البيانات دائماً رقمية.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'الذكاء الاصطناعي يمكن استخدامه في تحليل البيانات الضخمة.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'في طوبولوجيا الخطية (Bus)، جميع الأجهزة تشترك في نفس خط الاتصال.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'ROM أسرع من RAM.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'المعالجة الإلكترونية تحتاج إلى برمجيات لتشغيلها.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'النظام الثنائي يستخدم الأرقام من 0 إلى 7.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'المعلومات يمكن استخدامها في اتخاذ القرارات.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الإنترنت هو شبكة عالمية تربط ملايين الأجهزة.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الرقم الثماني 10 يساوي 8 في العشري.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'القرص الصلب هو وحدة تخزين مؤقتة.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'في دورة المعالجة، التخزين يحدث فقط بعد الإخراج.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'الذكاء الاصطناعي يمكنه التعرف على الصور والوجوه.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'طوبولوجيا الشبكة تحدد طريقة توصيل الأجهزة.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'المعالجة اليدوية هي أسرع أنواع المعالجة.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'الرقم السادس عشر 2B يساوي 43 في العشري.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'البرمجيات التطبيقية مثل Excel تستخدم في معالجة البيانات.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'المودم (Modem) يستخدم لتحويل الإشارات الرقمية إلى تناظرية والعكس.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الشبكات تسمح بمشاركة الملفات والطابعات.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'الرقم الثنائي 101 يساوي 6 في العشري.', options:['صح','خطأ'], answer:1},
+  {type:'tf', q:'الذاكرة الرئيسية (RAM) تفقد محتواها عند انقطاع التيار.', options:['صح','خطأ'], answer:0},
+  {type:'tf', q:'المعالجة الإلكترونية يمكنها إجراء عمليات معقدة في وقت قصير.', options:['صح','خطأ'], answer:0},
+];
+
+// =============================================
+// EXAM STATE
+// =============================================
+let questions = [];
+let currentQ = 0;
+let answers = [];
+let timerInterval = null;
+let timeLeft = 3600;
+let studentName = '';
+let examStarted = false;
+let selectedMinutes = 60;
+
+// =============================================
+// INIT
+// =============================================
+document.getElementById('totalQCount').textContent = ALL_QUESTIONS.length;
+
+// Particles
+(function createParticles() {
+  const container = document.getElementById('particles');
+  for(let i=0;i<25;i++){
+    const p = document.createElement('div');
+    p.className='particle';
+    p.style.left = Math.random()*100+'%';
+    p.style.animationDuration = (10+Math.random()*20)+'s';
+    p.style.animationDelay = (Math.random()*15)+'s';
+    p.style.width = p.style.height = (1+Math.random()*3)+'px';
+    p.style.opacity = 0.1+Math.random()*0.3;
+    const colors = ['#3b82f6','#06b6d4','#8b5cf6','#10b981'];
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    container.appendChild(p);
+  }
+})();
+
+// Timer option selection
+document.querySelectorAll('.timer-option').forEach(opt => {
+  opt.addEventListener('click', function(){
+    document.querySelectorAll('.timer-option').forEach(o=>o.classList.remove('selected'));
+    this.classList.add('selected');
+    selectedMinutes = parseInt(this.dataset.minutes);
+  });
+});
+
+// =============================================
+// AUDIO
+// =============================================
+function playClick(correct) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(correct ? 880 : 440, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(correct ? 1200 : 220, ctx.currentTime+0.1);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.15);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime+0.15);
+  } catch(e){}
+}
+
+function playSelect() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.setValueAtTime(660, ctx.currentTime);
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.08);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime+0.08);
+  } catch(e){}
+}
+
+// =============================================
+// SHUFFLE
+// =============================================
+function shuffle(arr) {
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+// =============================================
+// START EXAM
+// =============================================
+function startExam() {
+  studentName = document.getElementById('studentName').value.trim();
+  if(!studentName) {
+    document.getElementById('studentName').style.borderColor = 'var(--accent-red)';
+    document.getElementById('studentName').placeholder = '⚠️ يرجى إدخال اسمك أولاً';
+    setTimeout(()=>{
+      document.getElementById('studentName').style.borderColor='';
+      document.getElementById('studentName').placeholder='أدخل اسمك بالكامل...';
+    },2000);
+    return;
+  }
+
+  // Prepare questions with shuffled options
+  questions = shuffle(ALL_QUESTIONS).map(q => {
+    const shuffledOptions = [...q.options.map((opt,i)=>({text:opt, origIndex:i}))];
+    // Shuffle options
+    for(let i=shuffledOptions.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [shuffledOptions[i],shuffledOptions[j]]=[shuffledOptions[j],shuffledOptions[i]];
+    }
+    const newAnswer = shuffledOptions.findIndex(o=>o.origIndex===q.answer);
+    return {...q, shuffledOptions, newAnswer};
+  });
+
+  answers = new Array(questions.length).fill(null);
+  currentQ = 0;
+  timeLeft = selectedMinutes * 60;
+
+  document.getElementById('headerName').textContent = studentName;
+  document.getElementById('startScreen').classList.remove('active');
+  document.getElementById('examScreen').classList.add('active');
+
+  renderQuestion();
+  startTimer();
+  examStarted = true;
+}
+
+// =============================================
+// RENDER QUESTION
+// =============================================
+function renderQuestion() {
+  const q = questions[currentQ];
+  const total = questions.length;
+  const isLast = currentQ === total - 1;
+
+  // Progress
+  const pct = ((currentQ+1)/total)*100;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressText').textContent = (currentQ+1)+' / '+total;
+
+  // Nav buttons
+  document.getElementById('nextBtn').style.display = isLast ? 'none' : '';
+  document.getElementById('finishBtn').style.display = isLast ? '' : 'none';
+  document.getElementById('nextBtn').disabled = answers[currentQ] === null;
+
+  const letters = ['أ','ب','ج','د'];
+  const typeBadge = q.type==='tf'
+    ? '<span class="question-type-badge badge-tf">✓ صح / خطأ</span>'
+    : '<span class="question-type-badge badge-mcq">◉ اختيار متعدد</span>';
+
+  let optionsHTML = '';
+  q.shuffledOptions.forEach((opt,i) => {
+    const isSelected = answers[currentQ] === i;
+    const letter = q.type==='tf' ? (i===0?'✓':'✗') : letters[i];
+    optionsHTML += `
+      <button class="option-btn ${isSelected?'selected':''}" onclick="selectAnswer(${i})" id="opt_${i}">
+        <div class="option-letter">${letter}</div>
+        <div class="option-text">${opt.text}</div>
+      </button>`;
+  });
+
+  document.getElementById('examBody').innerHTML = `
+    <div class="question-card">
+      <div class="question-meta">
+        <div class="question-num">السؤال ${currentQ+1} من ${total}</div>
+        ${typeBadge}
+      </div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid">${optionsHTML}</div>
+    </div>`;
+
+  // Scroll to top
+  document.getElementById('examBody').scrollTop = 0;
+  window.scrollTo(0,0);
+}
+
+// =============================================
+// SELECT ANSWER
+// =============================================
+function selectAnswer(idx) {
+  answers[currentQ] = idx;
+  playSelect();
+
+  // Update UI
+  document.querySelectorAll('.option-btn').forEach((btn,i) => {
+    btn.classList.toggle('selected', i===idx);
+  });
+
+  document.getElementById('nextBtn').disabled = false;
+}
+
+// =============================================
+// NEXT QUESTION
+// =============================================
+function nextQuestion() {
+  if(answers[currentQ] === null) {
+    // Shake effect
+    const btn = document.getElementById('nextBtn');
+    btn.style.transform='translateX(-8px)';
+    setTimeout(()=>{ btn.style.transform='translateX(8px)'; },100);
+    setTimeout(()=>{ btn.style.transform=''; },200);
+    return;
+  }
+  if(currentQ < questions.length-1) {
+    currentQ++;
+    renderQuestion();
+  }
+}
+
+// =============================================
+// TIMER
+// =============================================
+function startTimer() {
+  updateTimerDisplay();
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    updateTimerDisplay();
+    if(timeLeft<=0) {
+      clearInterval(timerInterval);
+      finishExam(true);
+    }
+  },1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timeLeft/60);
+  const s = timeLeft%60;
+  const display = document.getElementById('timerDisplay');
+  display.textContent = '⏱ '+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+
+  display.classList.remove('warning','danger');
+  if(timeLeft <= 60) display.classList.add('danger');
+  else if(timeLeft <= 300) display.classList.add('warning');
+}
+
+// =============================================
+// FINISH ALERT
+// =============================================
+function showFinishAlert() {
+  const unanswered = answers.filter(a=>a===null).length;
+  document.getElementById('alertTitle').textContent = 'إنهاء الامتحان';
+  document.getElementById('alertMsg').textContent = unanswered > 0
+    ? `⚠️ لديك ${unanswered} سؤال غير مُجاب. هل تريد الإنهاء؟`
+    : '✅ هل أنت متأكد من إنهاء الامتحان؟';
+  document.getElementById('alertOverlay').classList.add('show');
+}
+
+function closeAlert() {
+  document.getElementById('alertOverlay').classList.remove('show');
+}
+
+// =============================================
+// FINISH EXAM
+// =============================================
+function finishExam(timeUp=false) {
+  closeAlert();
+  clearInterval(timerInterval);
+
+  // Calculate score
+  let correct = 0;
+  const wrongQuestions = [];
+
+  questions.forEach((q,i) => {
+    const userAns = answers[i];
+    if(userAns !== null && userAns === q.newAnswer) {
+      correct++;
+    } else {
+      wrongQuestions.push({
+        q: q.q,
+        userAns: userAns !== null ? q.shuffledOptions[userAns].text : '(لم يُجب)',
+        correctAns: q.shuffledOptions[q.newAnswer].text
+      });
+    }
+  });
+
+  const total = questions.length;
+  const wrong = total - correct;
+  const pct = Math.round((correct/total)*100);
+
+  let gradeClass, gradeLabel, gradeIcon;
+  if(pct>=90){ gradeClass='excellent'; gradeLabel='ممتاز'; gradeIcon='🏆'; }
+  else if(pct>=80){ gradeClass='very-good'; gradeLabel='جيد جداً'; gradeIcon='⭐'; }
+  else if(pct>=70){ gradeClass='good'; gradeLabel='جيد'; gradeIcon='👍'; }
+  else if(pct>=50){ gradeClass='pass'; gradeLabel='مقبول'; gradeIcon='✅'; }
+  else { gradeClass='fail'; gradeLabel='راسب'; gradeIcon='❌'; }
+
+  // Build wrong cards
+  let wrongHTML = '';
+  if(wrongQuestions.length>0) {
+    wrongHTML = `
+      <div class="review-section">
+        <div class="review-title">❌ الإجابات الخاطئة (${wrongQuestions.length} سؤال)</div>
+        ${wrongQuestions.map((w,i)=>`
+          <div class="review-card">
+            <div class="review-q">📌 السؤال ${i+1}: ${w.q}</div>
+            <div class="review-answer review-wrong">
+              <div class="review-icon">❌</div>
+              <div><strong>إجابتك:</strong> ${w.userAns}</div>
+            </div>
+            <div class="review-answer review-correct">
+              <div class="review-icon">✅</div>
+              <div><strong>الإجابة الصحيحة:</strong> ${w.correctAns}</div>
+            </div>
+          </div>`).join('')}
+      </div>`;
+  } else {
+    wrongHTML = `<div class="review-section"><div style="text-align:center;padding:32px;color:var(--accent-green);font-size:48px">🎉</div><div style="text-align:center;font-size:18px;font-weight:700;color:var(--accent-green)">إجاباتك كلها صحيحة!</div></div>`;
+  }
+
+  const timeUpMsg = timeUp ? '<div style="color:var(--accent-yellow);font-size:13px;margin-bottom:12px">⏰ انتهى الوقت - تم إنهاء الامتحان تلقائياً</div>' : '';
+
+  document.getElementById('resultScreen').innerHTML = `
+    ${timeUpMsg}
+    <div class="result-card">
+      <div class="grade-circle ${gradeClass}">
+        <div class="grade-percent">${pct}%</div>
+        <div class="grade-label">${gradeLabel}</div>
+      </div>
+      <h2 class="grade-title">${gradeIcon} ${gradeLabel}</h2>
+      <p class="grade-subtitle">مرحباً ${studentName}، هذه نتيجة امتحانك</p>
+      <div class="result-stats">
+        <div class="result-stat stat-correct">
+          <div class="result-stat-val">${correct}</div>
+          <div class="result-stat-label">✅ صحيح</div>
+        </div>
+        <div class="result-stat stat-wrong">
+          <div class="result-stat-val">${wrong}</div>
+          <div class="result-stat-label">❌ خطأ</div>
+        </div>
+        <div class="result-stat stat-total">
+          <div class="result-stat-val">${total}</div>
+          <div class="result-stat-label">📝 إجمالي</div>
+        </div>
+      </div>
+      <div class="action-btns">
+        <button class="action-btn btn-restart" onclick="restartExam()">🔄 إعادة الامتحان</button>
+      </div>
+    </div>
+    ${wrongHTML}
+  `;
+
+  document.getElementById('examScreen').classList.remove('active');
+  document.getElementById('resultScreen').classList.add('active');
+
+  // Play sound
+  playClick(pct >= 50);
+}
+
+// =============================================
+// RESTART
+// =============================================
+function restartExam() {
+  examStarted = false;
+  currentQ = 0;
+  answers = [];
+  questions = [];
+  document.getElementById('resultScreen').classList.remove('active');
+  document.getElementById('startScreen').classList.add('active');
+  document.getElementById('studentName').value = '';
+  document.getElementById('progressFill').style.width = '0%';
+}
+</script>
+</body>
+</html>

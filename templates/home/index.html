@@ -1,0 +1,604 @@
+<!-- templates/home/index.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ارتقاء - صرح التعليم الأكاديمي والمهني العريق{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ============================================================
+   HERITAGE HERO SECTION (BURGUNDY & GOLD ACADEMIC HALL)
+   ============================================================ */
+.hero {
+    position: relative;
+    padding: 6.5rem 5% 5.5rem;
+    overflow: hidden;
+    background: linear-gradient(135deg, #4A0C16 0%, #2D050D 60%, #1A0307 100%);
+    color: #FAF6EE;
+    text-align: center;
+    border-bottom: 3px solid var(--c-gold);
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(circle at 50% 25%, rgba(194, 155, 83, 0.15) 0%, transparent 60%),
+        repeating-linear-gradient(45deg, rgba(194, 155, 83, 0.015) 0, rgba(194, 155, 83, 0.015) 1px, transparent 0, transparent 24px);
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.hero-seal {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(45, 5, 13, 0.7);
+    border: 1px solid var(--c-gold);
+    outline: 1px solid rgba(194, 155, 83, 0.3);
+    outline-offset: 3px;
+    padding: 0.4rem 1.4rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--c-gold-light);
+    margin-bottom: 2rem;
+    font-family: var(--font-heading);
+    letter-spacing: 0.5px;
+}
+
+.hero h1 {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 5.5vw, 4.2rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 1.25rem;
+    color: #FFFFFF;
+}
+
+.hero h1 span {
+    color: var(--c-gold-light);
+    display: block;
+    font-size: 0.82em;
+    margin-top: 0.25rem;
+    background: var(--c-gold-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+    font-size: 1.25rem;
+    line-height: 1.85;
+    color: #E6D8CC;
+    margin-bottom: 2.5rem;
+    max-width: 740px;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: var(--font-heading);
+}
+
+.hero-search-wrap {
+    max-width: 640px;
+    margin: 0 auto 2.5rem;
+    background: #FAF6EE;
+    padding: 0.45rem;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--c-gold);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    display: flex;
+    gap: 0.5rem;
+}
+
+.hero-search-wrap input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--c-text-main);
+    padding: 0.75rem 1.25rem;
+    font-family: var(--font-body);
+    font-size: 0.98rem;
+    outline: none;
+}
+
+.hero-search-wrap input::placeholder {
+    color: #8C7870;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1.2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3.5rem;
+}
+
+.hero-stats-frame {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 1.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid rgba(194, 155, 83, 0.35);
+    position: relative;
+}
+
+.hero-stats-frame::before {
+    content: '❖';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2D050D;
+    color: var(--c-gold);
+    padding: 0 12px;
+    font-size: 0.9rem;
+}
+
+.stat-box {
+    background: rgba(35, 19, 22, 0.6);
+    border: 1px solid rgba(194, 155, 83, 0.3);
+    padding: 1.2rem 1rem;
+    border-radius: var(--radius-sm);
+    text-align: center;
+}
+
+.stat-box .num {
+    font-family: var(--font-classic);
+    font-size: 2.3rem;
+    font-weight: 800;
+    color: var(--c-gold-light);
+    line-height: 1.2;
+}
+
+.stat-box .lbl {
+    font-family: var(--font-heading);
+    color: #D3C3B5;
+    font-size: 1.05rem;
+    margin-top: 0.35rem;
+}
+
+/* ============================================================
+   SECTIONS & TRADITIONAL FRAMES
+   ============================================================ */
+.section {
+    padding: 5rem 5%;
+    max-width: 1320px;
+    margin: 0 auto;
+}
+
+.section-title-wrap {
+    text-align: center;
+    margin-bottom: 3.5rem;
+    position: relative;
+}
+
+.section-tag {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--c-gold-dark);
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+.section-title {
+    font-family: var(--font-heading);
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--c-burgundy-dark);
+    margin-bottom: 0.6rem;
+}
+
+.section-desc {
+    color: var(--c-text-muted);
+    font-size: 1.1rem;
+    max-width: 650px;
+    margin: 0 auto;
+    font-family: var(--font-heading);
+}
+
+/* Categories Medallion Grid */
+.faculties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+}
+
+.faculty-card {
+    background: #FFFFFF;
+    border: 1px solid var(--c-border);
+    outline: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 1.75rem 1.25rem;
+    text-align: center;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: var(--shadow-classic);
+}
+
+.faculty-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--c-gold);
+    outline-color: var(--c-gold-soft);
+    outline-offset: -5px;
+    box-shadow: var(--shadow-hover);
+}
+
+.faculty-emblem {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--c-parchment-bg);
+    border: 2px solid var(--c-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-burgundy);
+    margin-bottom: 1.1rem;
+    transition: var(--transition);
+}
+
+.faculty-card:hover .faculty-emblem {
+    background: var(--c-burgundy);
+    color: var(--c-gold-light);
+}
+
+.faculty-name {
+    font-family: var(--font-heading);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--c-burgundy-dark);
+    margin-bottom: 0.35rem;
+}
+
+.faculty-count {
+    font-size: 0.85rem;
+    color: var(--c-gold-dark);
+    font-weight: 700;
+}
+
+/* Classical Quote Vignette */
+.quote-vignette {
+    background: #FFFFFF;
+    border: 1px solid var(--c-border);
+    outline: 1px solid var(--c-gold);
+    outline-offset: -7px;
+    padding: 3rem 2.5rem;
+    border-radius: var(--radius-sm);
+    text-align: center;
+    margin: 4rem auto;
+    max-width: 950px;
+    position: relative;
+    box-shadow: var(--shadow-classic);
+}
+
+.quote-vignette p {
+    font-family: var(--font-heading);
+    font-size: 1.55rem;
+    line-height: 1.85;
+    color: var(--c-burgundy-dark);
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.quote-author {
+    color: var(--c-gold-dark);
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+/* Testimonial Scrolls */
+.testimonial-scrolls {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.testi-scroll {
+    background: #FFFFFF;
+    border: 1px solid var(--c-border);
+    padding: 2rem;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-classic);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.testi-scroll::before {
+    content: '❝';
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--c-gold-soft);
+    font-family: serif;
+}
+
+/* Classic Call to Action */
+.cta-academic {
+    background: linear-gradient(135deg, #4A0C16 0%, #2D050D 100%);
+    border: 2px solid var(--c-gold);
+    outline: 1px solid rgba(194, 155, 83, 0.4);
+    outline-offset: -8px;
+    padding: 4.5rem 5%;
+    text-align: center;
+    color: #FFFFFF;
+    border-radius: var(--radius-sm);
+    margin: 4rem auto 1rem;
+    box-shadow: 0 15px 35px rgba(58, 7, 16, 0.25);
+    max-width: 1200px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Heritage Hero -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-seal">
+            <span>❖ صَرْحُ ارْتِقَاءْ لِلعُلُومِ وَالمَعَارِفِ الأَكَادِيمِيَّةِ ❖</span>
+        </div>
+        <h1>
+            طَلَبُ العِلْمِ سَبِيلُ الرِّفْعَةِ
+            <span>«حَيْثُ تَلْتَقِي أَصَالَةُ المَعْرِفَةِ بِإِتْقَانِ العَصْرِ»</span>
+        </h1>
+        <p>
+            مؤسسة تعليمية تُعنى بتأصيل العلوم النافعة، وصقل الكفايات المهنية عبر مساقات تفاعلية رصينة، يُشرف عليها نخبة من كبار الأساتذة والخبراء المعتمدين.
+        </p>
+
+        <!-- Search Scroll -->
+        <form action="{% url 'courses:list' %}" method="get" class="hero-search-wrap">
+            <input type="text" name="q" placeholder="ابحث في سجلات العلوم، المساقات، أو أسماء الأساتذة...">
+            <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.8rem;">
+                <span class="material-icons-round" style="font-size: 1.15rem; color: var(--c-gold-light);">search</span>
+                تصفح السجلات
+            </button>
+        </form>
+
+        <!-- Primary Actions -->
+        <div class="hero-actions">
+            <a href="{% url 'courses:list' %}" class="btn btn-gold" style="padding: 0.85rem 2.2rem; font-size: 1.05rem;">
+                <span class="material-icons-round" style="font-size: 1.2rem;">explore</span>
+                استكشف خزانة الكورسات
+            </a>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'accounts:register' %}" class="btn btn-outline" style="padding: 0.85rem 2.2rem; font-size: 1.05rem; color: #FFFFFF; border-color: var(--c-gold);">
+                <span class="material-icons-round" style="font-size: 1.2rem; color: var(--c-gold);">school</span>
+                التحق كطالب علم
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Academic Stats Frame -->
+        <div class="hero-stats-frame">
+            <div class="stat-box">
+                <div class="num">+{{ stats.courses }}</div>
+                <div class="lbl">مساقاً ودورة معتمدة</div>
+            </div>
+            <div class="stat-box">
+                <div class="num">+{{ stats.students }}</div>
+                <div class="lbl">طالب علم منتسب</div>
+            </div>
+            <div class="stat-box">
+                <div class="num">+{{ stats.instructors }}</div>
+                <div class="lbl">أستاذاً وخبيراً معتمداً</div>
+            </div>
+            <div class="stat-box">
+                <div class="num">{{ stats.rating }} ★</div>
+                <div class="lbl">معدل التقييم الأكاديمي</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Classical Wisdom Quotation Banner -->
+<div class="container">
+    <div class="quote-vignette">
+        <p>«العِلْمُ مَغْرَسُ كُلِّ فَخْرٍ فَافْتَخِرْ • وَاحْذَرْ يَفُوتُكَ فَخْرُ ذَاكَ المَغْرَسِ»</p>
+        <div class="ornament-divider">❖ ❖ ❖</div>
+        <div class="quote-author">مِنْ أَقْوَالِ السَّلَفِ الصَّالِحِ فِي الحَثِّ عَلَى طَلَبِ العِلْمِ</div>
+    </div>
+</div>
+
+<!-- Faculties & Fields -->
+{% if categories %}
+<section class="section" style="padding-top: 1rem;">
+    <div class="section-title-wrap">
+        <span class="section-tag">الأَقْسَامُ وَالمَيَادِينُ</span>
+        <h2 class="section-title">ميادين المعرفة والتخصص</h2>
+        <div class="ornament-divider">❖</div>
+        <p class="section-desc">تصفح مساقات الأكاديمية المصنفة بحسب ميادين العلم والاختصاص المهني الدقيق.</p>
+    </div>
+
+    <div class="faculties-grid">
+        {% for cat in categories %}
+        <a href="{% url 'courses:list' %}?category={{ cat.slug }}" class="faculty-card">
+            <div class="faculty-emblem">
+                <span class="material-icons-round" style="font-size: 1.85rem;">{{ cat.icon|default:"auto_stories" }}</span>
+            </div>
+            <h3 class="faculty-name">{{ cat.name }}</h3>
+            <span class="faculty-count">{{ cat.published_courses_count }} مساقاً دراسياً</span>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Selected Mastercourses -->
+<section class="section" style="padding-top: 2rem;">
+    <div class="section-title-wrap">
+        <span class="section-tag">صَفْوَةُ المَسَاقَاتِ</span>
+        <h2 class="section-title">المساقات الدراسية المميزة</h2>
+        <div class="ornament-divider">❖</div>
+        <p class="section-desc">مجموعة منتقاة بعناية فائقة لتأهيلك للانطلاق في الميدان العملي والعلمي بكفاءة وثبات.</p>
+    </div>
+
+    <div class="grid cols-3">
+        {% for course in featured_courses %}
+        <a href="{% url 'courses:detail' course.slug %}" class="course-card">
+            <div class="course-img-wrapper">
+                {% if course.thumbnail %}
+                    <img src="{{ course.thumbnail.url }}" alt="{{ course.title }}" class="course-img">
+                {% else %}
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--c-burgundy-dark), var(--c-burgundy)); color: var(--c-gold-light);">
+                        <span class="material-icons-round" style="font-size: 4rem; opacity: 0.85;">menu_book</span>
+                    </div>
+                {% endif %}
+                <span class="course-level-pill">{{ course.get_level_display }}</span>
+                {% if course.has_discount %}
+                <span class="course-discount-pill">خصم {{ course.discount_percentage }}%</span>
+                {% endif %}
+            </div>
+            <div class="course-body">
+                <span class="course-badge">{{ course.category.name|default:"عام" }}</span>
+                <h3 class="course-title">{{ course.title }}</h3>
+                <p style="color: var(--c-text-muted); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.6;">{{ course.description|truncatewords:15 }}</p>
+                <div class="course-meta">
+                    <span><span class="material-icons-round" style="font-size: 1.1rem; color: var(--c-burgundy);">history_edu</span> {{ course.instructor.display_name }}</span>
+                    <span><span class="material-icons-round text-yellow" style="font-size: 1.1rem;">star</span> {{ course.average_rating|default:"4.9" }}</span>
+                    <span><span class="material-icons-round" style="font-size: 1.1rem; color: var(--c-gold-dark);">play_lesson</span> {{ course.lessons_count|default:course.total_lessons_count }} دروس</span>
+                </div>
+                <div class="course-footer">
+                    <div class="course-price">
+                        {% if course.effective_price > 0 %}
+                            <span>${{ course.effective_price }}</span>
+                            {% if course.has_discount %}
+                                <span class="course-old-price">${{ course.price }}</span>
+                            {% endif %}
+                        {% else %}
+                            <span style="color: var(--c-emerald); font-weight: 800;">مَجَّانِيٌّ كَامِلًا</span>
+                        {% endif %}
+                    </div>
+                    <span class="btn btn-outline" style="padding: 0.4rem 1.1rem; font-size: 0.85rem;">طالع المساق</span>
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; background: #FFFFFF; border: 1px solid var(--c-border); border-radius: var(--radius-sm);">
+            <span class="material-icons-round" style="font-size: 3.5rem; color: var(--c-gold);">menu_book</span>
+            <h3 style="margin-top: 1rem; font-family: var(--font-heading);">يتم تجهيز باقة المساقات الجديدة قريباً</h3>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="text-align: center; margin-top: 3.5rem;">
+        <a href="{% url 'courses:list' %}" class="btn btn-primary" style="padding: 0.85rem 2.8rem; font-size: 1.05rem;">
+            <span>طالع كامل ديوان الكورسات</span>
+            <span class="material-icons-round" style="font-size: 1.15rem;">arrow_back</span>
+        </a>
+    </div>
+</section>
+
+<!-- Testimonials & Academic Commendations -->
+<section style="background: var(--c-parchment-subtle); padding: 5rem 5%; border-top: 1px solid var(--c-border); border-bottom: 1px solid var(--c-border);">
+    <div style="max-width: 1320px; margin: 0 auto;">
+        <div class="section-title-wrap">
+            <span class="section-tag">شَهَادَاتُ المُنْتَسِبِينَ</span>
+            <h2 class="section-title">أقوال الدارسين والخريجين</h2>
+            <div class="ornament-divider">❖</div>
+            <p class="section-desc">انطباعات وتجارب واقعية لطلاب نالوا المعرفة وتسلحوا بالخبرة من خلال منصة ارتقاء.</p>
+        </div>
+
+        <div class="testimonial-scrolls">
+            {% for rev in top_reviews %}
+            <div class="testi-scroll">
+                <div>
+                    <div style="color: var(--c-gold); margin-bottom: 0.75rem; font-size: 1.15rem;">
+                        {% for i in "12345" %}{% if forloop.counter <= rev.rating %}★{% else %}☆{% endif %}{% endfor %}
+                    </div>
+                    <p style="font-family: var(--font-heading); font-size: 1.2rem; line-height: 1.75; color: var(--c-text-main); margin-bottom: 1.25rem;">
+                        «{{ rev.comment }}»
+                    </p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem; border-top: 1px dashed var(--c-border); padding-top: 1rem;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--c-burgundy); color: var(--c-gold-light); display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 1.3rem; font-weight: bold; border: 1px solid var(--c-gold);">
+                        {{ rev.student.display_name|slice:":1"|upper }}
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1.1rem; margin-bottom: 0.1rem; color: var(--c-burgundy-dark);">{{ rev.student.display_name }}</h4>
+                        <span style="font-size: 0.82rem; color: var(--c-text-muted);">دارس بمساق: {{ rev.course.title|truncatewords:4 }}</span>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="testi-scroll">
+                <div>
+                    <div style="color: var(--c-gold); margin-bottom: 0.75rem; font-size: 1.15rem;">★★★★★</div>
+                    <p style="font-family: var(--font-heading); font-size: 1.2rem; line-height: 1.75; color: var(--c-text-main); margin-bottom: 1.25rem;">
+                        «تأصيل علمي متميز لم أعهده في المنصات الحديثة. المناهج متسلسلة بدقة والتطبيقات العملية تؤهل مباشرة لاحتراف المجال.»
+                    </p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem; border-top: 1px dashed var(--c-border); padding-top: 1rem;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--c-burgundy); color: var(--c-gold-light); display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 1.3rem; font-weight: bold; border: 1px solid var(--c-gold);">أ</div>
+                    <div>
+                        <h4 style="font-size: 1.1rem; margin-bottom: 0.1rem; color: var(--c-burgundy-dark);">أحمد بن محمود</h4>
+                        <span style="font-size: 0.82rem; color: var(--c-text-muted);">مهندس برمجيات ونظم</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testi-scroll">
+                <div>
+                    <div style="color: var(--c-gold); margin-bottom: 0.75rem; font-size: 1.15rem;">★★★★★</div>
+                    <p style="font-family: var(--font-heading); font-size: 1.2rem; line-height: 1.75; color: var(--c-text-main); margin-bottom: 1.25rem;">
+                        «الوقار الأكاديمي والهدوء في الشرح يبعث على التركيز التام. حصلت على شهادة الإتمام المعتمدة وكانت علامة فارقة في سيرتي الذاتية.»
+                    </p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem; border-top: 1px dashed var(--c-border); padding-top: 1rem;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--c-burgundy); color: var(--c-gold-light); display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 1.3rem; font-weight: bold; border: 1px solid var(--c-gold);">س</div>
+                    <div>
+                        <h4 style="font-size: 1.1rem; margin-bottom: 0.1rem; color: var(--c-burgundy-dark);">سارة العلي</h4>
+                        <span style="font-size: 0.82rem; color: var(--c-text-muted);">أخصائية تصميم رقمي</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testi-scroll">
+                <div>
+                    <div style="color: var(--c-gold); margin-bottom: 0.75rem; font-size: 1.15rem;">★★★★★</div>
+                    <p style="font-family: var(--font-heading); font-size: 1.2rem; line-height: 1.75; color: var(--c-text-main); margin-bottom: 1.25rem;">
+                        «بيئة تعليمية وقورة تأخذ بيد الطالب من المبادئ الأولية حتى المعارف المتقدمة. أوصي كل باحث عن إتقان حقيقي بالانتساب للمنصة.»
+                    </p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.75rem; border-top: 1px dashed var(--c-border); padding-top: 1rem;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--c-burgundy); color: var(--c-gold-light); display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 1.3rem; font-weight: bold; border: 1px solid var(--c-gold);">م</div>
+                    <div>
+                        <h4 style="font-size: 1.1rem; margin-bottom: 0.1rem; color: var(--c-burgundy-dark);">محمد بن خالد</h4>
+                        <span style="font-size: 0.82rem; color: var(--c-text-muted);">محلل بيانات واقتصادي</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Call to Faculty CTA -->
+<div class="container">
+    <section class="cta-academic">
+        <div style="color: var(--c-gold-light); font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 0.5rem;">❖ دَعْوَةُ اهْتِمَامٍ لِعُلَمَاءِ الأُمَّةِ وَخُبَرَائِهَا ❖</div>
+        <h2 style="font-family: var(--font-heading); font-size: 2.6rem; color: #FFFFFF; margin-bottom: 1.25rem;">هل أنت خبير أو أستاذ متخصص في مجالك؟</h2>
+        <p style="font-family: var(--font-heading); font-size: 1.25rem; color: #D9CBB7; margin-bottom: 2.5rem; max-width: 720px; margin-left: auto; margin-right: auto; line-height: 1.8;">
+            انضم إلى هيئة التدريس المعتمدة في منصة ارتقاء، وشارك في بناء جيل متسلح بالمعارف الدقيقة والخبرات العملية عبر مناهج تعليمية متكاملة.
+        </p>
+        {% if user.is_authenticated and user.role == 'instructor' %}
+            <a href="{% url 'courses:create' %}" class="btn btn-gold" style="padding: 1rem 3rem; font-size: 1.15rem;">
+                <span class="material-icons-round">edit_square</span> أضف مساقاً جديداً للديوان
+            </a>
+        {% else %}
+            <a href="{% url 'accounts:register' %}?role=instructor" class="btn btn-gold" style="padding: 1rem 3rem; font-size: 1.15rem;">
+                <span class="material-icons-round">school</span> قدّم طلب الانضمام لهيئة التدريس
+            </a>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

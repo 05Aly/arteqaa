@@ -1,0 +1,16 @@
+Django>=4.2,<5.0
+django-unfold
+django-environ
+psycopg2-binary
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+celery
+redis
+django-cloudinary-storage
+cloudinary
+Pillow
+python-magic
+whitenoise
+gunicorn
+reportlab

@@ -1,0 +1,199 @@
+<!-- templates/base.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ارتقاء - منصة التعليم الأكاديمي والمهني{% endblock %}</title>
+    <!-- Fonts: Amiri (Classical Literary Arabic) & Cairo (UI) & Cinzel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@400;500;600;700;800;900&family=Cinzel:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Heritage Top Ribbon -->
+    <div class="top-ribbon">
+        <div class="top-ribbon-text">
+            <span>❖ صَرْحٌ تَعْلِيمِيٌّ عَرِيق يُعْنَى بِنَشْرِ العِلْمِ وَتَأْهِيلِ الكِفَايَاتِ ❖</span>
+        </div>
+        <div class="top-ribbon-links">
+            <span><span class="material-icons-round" style="font-size: 0.95rem; vertical-align: middle; color: var(--c-gold);">workspace_premium</span> شهادات معتمدة ورقمية</span>
+            <span>•</span>
+            <a href="{% url 'courses:contact' %}"><span class="material-icons-round" style="font-size: 0.95rem; vertical-align: middle;">support_agent</span> مكتب الدعم والمساعدة</a>
+        </div>
+    </div>
+
+    <!-- Classic Navbar -->
+    <nav class="navbar" id="main-navbar">
+        <a href="{% url 'home' %}" class="nav-brand">
+            <div class="crest-icon">
+                <span class="material-icons-round" style="font-size: 1.65rem;">auto_stories</span>
+            </div>
+            <div class="brand-text-wrap">
+                <span class="brand-name">ارْتِقَاء</span>
+                <span class="brand-sub">الأكاديمية التعليمية</span>
+            </div>
+        </a>
+        
+        <div class="nav-links">
+            <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">الرئيسية</a>
+            <a href="{% url 'courses:list' %}" class="{% if request.resolver_match.app_name == 'courses' and request.resolver_match.url_name != 'contact' %}active{% endif %}">ديوان الكورسات</a>
+            <a href="{% url 'accounts:instructors' %}" class="{% if request.resolver_match.url_name == 'instructors' %}active{% endif %}">هيئة التدريس</a>
+            <a href="{% url 'courses:contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}">اتصل بنا</a>
+        </div>
+        
+        <div class="nav-actions">
+            <form action="{% url 'courses:list' %}" method="get" class="search-bar">
+                <span class="material-icons-round search-icon">search</span>
+                <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="ابحث في سجلات المعرفة...">
+            </form>
+            
+            {% if user.is_authenticated %}
+                {% if user.role == 'instructor' %}
+                    <a href="{% url 'accounts:instructor_dashboard' %}" class="btn btn-outline">
+                        <span class="material-icons-round" style="font-size: 1.15rem;">school</span>
+                        مجلس الأستاذ
+                    </a>
+                {% elif user.role == 'student' %}
+                    <a href="{% url 'accounts:student_dashboard' %}" class="btn btn-outline">
+                        <span class="material-icons-round" style="font-size: 1.15rem;">menu_book</span>
+                        سجل الطالب
+                    </a>
+                {% else %}
+                    <a href="/admin/" class="btn btn-outline">
+                        <span class="material-icons-round" style="font-size: 1.15rem;">shield</span>
+                        ديوان الإدارة
+                    </a>
+                {% endif %}
+                <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline" style="padding: 0.5rem; border-radius: var(--radius-sm);" title="تعديل السجل الشخصي">
+                    <span class="material-icons-round" style="font-size: 1.25rem;">account_circle</span>
+                </a>
+                <form action="{% url 'accounts:logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline" style="padding: 0.5rem; border-radius: var(--radius-sm); border-color: var(--c-border);" title="تسجيل الخروج">
+                        <span class="material-icons-round" style="font-size: 1.25rem; color: var(--c-burgundy);">logout</span>
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline">تسجيل الدخول</a>
+                <a href="{% url 'accounts:register' %}" class="btn btn-primary">
+                    <span class="material-icons-round" style="font-size: 1.1rem; color: var(--c-gold-light);">edit_note</span>
+                    انضم للمنصة
+                </a>
+            {% endif %}
+
+            <button class="mobile-menu-btn" onclick="document.getElementById('main-navbar').classList.toggle('menu-open')" aria-label="القائمة">
+                <span class="material-icons-round">menu</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Django Messages (Toast) -->
+    <div class="toast-container" id="toast-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="toast {{ message.tags }}">
+                    <span class="material-icons-round">
+                        {% if 'success' in message.tags %}verified{% elif 'error' in message.tags %}error{% elif 'warning' in message.tags %}warning{% else %}info{% endif %}
+                    </span>
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Classic Footer -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <a href="{% url 'home' %}" class="nav-brand" style="margin-bottom: 1.25rem;">
+                    <div class="crest-icon" style="background: var(--c-burgundy-light); border-color: var(--c-gold-light);">
+                        <span class="material-icons-round" style="color: var(--c-gold-light);">auto_stories</span>
+                    </div>
+                    <div class="brand-text-wrap">
+                        <span class="brand-name" style="color: var(--c-gold-light);">ارْتِقَاء</span>
+                        <span class="brand-sub" style="color: #D3C3B5;">صَرْحُ المعرفة والتعليم</span>
+                    </div>
+                </a>
+                <p style="color: #D3C3B5; margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.8;">صرح أكاديمي عربي عريق، يهدف إلى إحياء التقاليد العلمية الرصينة وتأصيل المعرفة الحديثة بأسلوب تعليمي متقن ورؤية متجددة.</p>
+                <div style="display: flex; gap: 0.85rem; color: var(--c-gold-light);">
+                    <a href="{% url 'courses:list' %}" style="width: 38px; height: 38px; border-radius: var(--radius-sm); border: 1px solid var(--c-gold-dark); background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center;"><span class="material-icons-round" style="font-size: 1.15rem;">menu_book</span></a>
+                    <a href="{% url 'accounts:instructors' %}" style="width: 38px; height: 38px; border-radius: var(--radius-sm); border: 1px solid var(--c-gold-dark); background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center;"><span class="material-icons-round" style="font-size: 1.15rem;">badge</span></a>
+                    <a href="{% url 'courses:contact' %}" style="width: 38px; height: 38px; border-radius: var(--radius-sm); border: 1px solid var(--c-gold-dark); background: rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center;"><span class="material-icons-round" style="font-size: 1.15rem;">mail</span></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>أروقة الأكاديمية</h3>
+                <ul>
+                    <li><a href="{% url 'home' %}">الصحيفة الرئيسية</a></li>
+                    <li><a href="{% url 'courses:list' %}">خزانة الكورسات والمساقات</a></li>
+                    <li><a href="{% url 'accounts:instructors' %}">ديوان الأساتذة والخبراء</a></li>
+                    <li><a href="{% url 'courses:contact' %}">المراسلات والاستفسارات</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>خدمات المنتسبين</h3>
+                <ul>
+                    <li><a href="{% url 'accounts:register' %}?role=instructor">الانضمام لهيئة التدريس</a></li>
+                    <li><a href="{% url 'accounts:register' %}">قيد طالب جديد</a></li>
+                    <li><a href="{% url 'enrollments:my_courses' %}">سجل المساقات الدراسية</a></li>
+                    <li><a href="{% url 'accounts:login' %}">بوابة الدخول الموحدة</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>المقر والاتصال</h3>
+                <ul style="color: #D3C3B5; font-size: 0.95rem;">
+                    <li style="display:flex; align-items:center; gap:0.6rem;"><span class="material-icons-round" style="color: var(--c-gold); font-size: 1.2rem;">location_city</span> القاهرة، جمهورية مصر العربية</li>
+                    <li style="display:flex; align-items:center; gap:0.6rem;"><span class="material-icons-round" style="color: var(--c-gold); font-size: 1.2rem;">local_phone</span> <span dir="ltr">+20 100 000 0000</span></li>
+                    <li style="display:flex; align-items:center; gap:0.6rem;"><span class="material-icons-round" style="color: var(--c-gold); font-size: 1.2rem;">email</span> contact@ertiqa-academy.edu</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>جميع الحقوق محفوظة لصالح صرح ارتقاء التعليمي والأكاديمي © {% now "Y" }}. «وَقُل رَّبِّ زِدْنِي عِلْمًا»</p>
+        </div>
+    </footer>
+
+    <!-- Global JS -->
+    <script>
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? 'verified' : (type === 'error' ? 'error' : 'info');
+            toast.innerHTML = `<span class="material-icons-round">${icon}</span><p>${message}</p>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(15px)';
+                toast.style.transition = 'all 0.35s ease';
+                setTimeout(() => toast.remove(), 350);
+            }, 4500);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => {
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(15px)';
+                    toast.style.transition = 'all 0.35s ease';
+                    setTimeout(() => toast.remove(), 350);
+                }, 4500);
+            });
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

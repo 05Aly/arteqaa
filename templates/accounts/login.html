@@ -1,0 +1,144 @@
+<!-- templates/accounts/login.html -->
+{% extends 'base.html' %}
+{% block title %}تسجيل الدخول - ارتقاء الأكاديمية{% endblock %}
+
+{% block extra_css %}
+<style>
+.auth-wrapper {
+    padding: 4rem 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.auth-container {
+    max-width: 480px;
+    width: 100%;
+    background: #FFFFFF;
+    padding: 3rem 2.5rem;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-classic);
+    border: 1px solid var(--c-border);
+    outline: 1px solid var(--c-gold-soft);
+    outline-offset: -6px;
+    position: relative;
+}
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+.auth-crest {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: var(--c-burgundy);
+    color: var(--c-gold-light);
+    border: 2px solid var(--c-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 4px 10px rgba(58, 7, 16, 0.2);
+}
+.auth-header h1 {
+    font-family: var(--font-heading);
+    color: var(--c-burgundy-dark);
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+.auth-header p {
+    color: var(--c-text-muted);
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+}
+
+.form-group {
+    margin-bottom: 1.35rem;
+}
+.form-label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--c-burgundy-dark);
+}
+.form-control {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1.5px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    background: var(--c-parchment-bg);
+    transition: var(--transition);
+}
+.form-control:focus {
+    outline: none;
+    border-color: var(--c-gold);
+    background: #FFFFFF;
+    box-shadow: 0 0 0 3px var(--c-gold-soft);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed var(--c-border);
+    color: var(--c-text-muted);
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+}
+.auth-footer a {
+    color: var(--c-burgundy);
+    font-weight: 700;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="auth-crest">
+                <span class="material-icons-round" style="font-size: 1.8rem;">vpn_key</span>
+            </div>
+            <h1>بوابة تسجيل الدخول</h1>
+            <p>أدخل بياناتك المعتمدة للمتابعة إلى قاعاتك ومساقاتك</p>
+        </div>
+        
+        <form method="POST">
+            {% csrf_token %}
+            {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+            {% endif %}
+            
+            <div class="form-group">
+                <label class="form-label">البريد الإلكتروني المعتمد</label>
+                <input type="email" name="email" class="form-control" placeholder="example@ertiqa.edu" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">كلمة المرور السرية</label>
+                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 0.9rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--c-text-muted);">
+                    <input type="checkbox" name="remember" value="1" checked style="accent-color: var(--c-burgundy);">
+                    تذكر بياناتي في هذا الجهاز
+                </label>
+                <a href="{% url 'courses:contact' %}" style="color: var(--c-burgundy); font-weight: 700;">طلب مساعدة؟</a>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.05rem; padding: 0.85rem;">
+                <span class="material-icons-round" style="font-size: 1.15rem; color: var(--c-gold-light);">login</span>
+                تسجيل الدخول للمنصة
+            </button>
+        </form>
+        
+        <div class="auth-footer">
+            ليس لديك قيدٌ بالأكاديمية بعد؟ <a href="{% url 'accounts:register' %}">التحق كطالب جديد</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

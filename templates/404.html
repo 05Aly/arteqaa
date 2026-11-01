@@ -1,0 +1,35 @@
+<!-- templates/404.html -->
+{% extends 'base.html' %}
+{% block title %}الصفحة غير مدونة - خطأ 404 - ارتقاء{% endblock %}
+
+{% block content %}
+<div style="min-height: 65vh; display: flex; align-items: center; justify-content: center; padding: 4rem 5%;">
+    <div style="max-width: 620px; text-align: center; background: var(--c-parchment-light); border: 2px double var(--c-gold); border-radius: var(--radius-lg); padding: 3.5rem 2.5rem; box-shadow: var(--shadow-md); position: relative;">
+        <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; border-radius: 50%; background: linear-gradient(135deg, var(--c-primary), var(--c-primary-dark)); border: 2px solid var(--c-gold); display: flex; align-items: center; justify-content: center; color: var(--c-gold-light);">
+            <span class="material-icons-round" style="font-size: 2.6rem;">search_off</span>
+        </div>
+
+        <span class="classic-badge" style="background: var(--c-gold); color: var(--c-primary-dark); font-size: 0.85rem; margin-bottom: 1rem;">
+            تنبيه ديوان الأكاديمية • رمز 404
+        </span>
+
+        <h1 style="font-family: var(--font-heading); font-size: 2.2rem; color: var(--c-primary); margin: 0.8rem 0;">
+            الصفحة المطلوبة غير مدونة في السجلات
+        </h1>
+
+        <p style="color: var(--c-ink-light); font-size: 1.05rem; line-height: 1.8; margin-bottom: 2rem;">
+            يبدو أن الرابط الذي سلكته قد تغيّر موضعه، أو أن الصحيفة المطلوبة قد تم نقلها إلى خزانة أخرى في الأكاديمية.
+        </p>
+
+        <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <a href="{% url 'home' %}" class="btn btn-primary" style="padding: 0.85rem 1.8rem;">
+                <span class="material-icons-round">home</span> العودة للرئيسية
+            </a>
+            <a href="{% url 'courses:list' %}" class="btn btn-secondary" style="padding: 0.85rem 1.8rem;">
+                <span class="material-icons-round">auto_stories</span> خزانة الكورسات
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

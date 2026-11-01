@@ -1,0 +1,434 @@
+<!-- templates/courses/manage_content.html -->
+{% extends 'base.html' %}
+{% block title %}إدارة منهج المساق: {{ course.title }} - ارتقاء{% endblock %}
+
+{% block extra_css %}
+<style>
+.manage-curriculum-page {
+    padding: 3.5rem 5% 5rem;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.curriculum-header {
+    background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-primary-dark) 100%);
+    border: 1px solid var(--c-gold);
+    border-radius: var(--radius-lg);
+    padding: 2.2rem 2.5rem;
+    color: var(--c-parchment-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.curriculum-header::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px dashed rgba(194, 155, 83, 0.4);
+    border-radius: calc(var(--radius-lg) - 4px);
+    pointer-events: none;
+}
+
+.curriculum-header h1 {
+    font-family: var(--font-heading);
+    font-size: 2.1rem;
+    color: var(--c-gold-light);
+    margin: 0.4rem 0 0.2rem;
+}
+
+.curriculum-header p {
+    color: rgba(250, 246, 238, 0.85);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* Add Section Card */
+.add-section-parchment {
+    background: #FFFDF9;
+    border: 1.5px dashed var(--c-gold);
+    border-radius: var(--radius);
+    padding: 1.8rem 2rem;
+    margin-bottom: 2.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.add-section-parchment h3 {
+    font-family: var(--font-heading);
+    color: var(--c-primary);
+    font-size: 1.25rem;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.add-section-parchment h3 .material-icons-round {
+    color: var(--c-gold);
+}
+
+.add-sec-form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Section Folio Card */
+.section-folio {
+    background: var(--c-parchment-light);
+    border: 1px solid var(--c-gold-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 2rem;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.section-folio:hover {
+    border-color: var(--c-gold);
+    box-shadow: var(--shadow-md);
+}
+
+.section-folio-header {
+    background: #F5EFE3;
+    padding: 1.25rem 1.8rem;
+    border-bottom: 1px solid var(--c-gold-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.section-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.section-badge-index {
+    font-family: var(--font-accent);
+    background: var(--c-primary);
+    color: var(--c-gold-light);
+    border: 1px solid var(--c-gold);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.section-title-text {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    color: var(--c-primary);
+    font-weight: 700;
+}
+
+.section-count-tag {
+    background: rgba(103, 17, 32, 0.08);
+    color: var(--c-primary);
+    font-size: 0.8rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* Lesson Ledger Items */
+.lesson-item {
+    padding: 1.1rem 1.8rem;
+    border-bottom: 1px solid rgba(194, 155, 83, 0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: #FFFFFF;
+    transition: var(--transition);
+}
+
+.lesson-item:last-child {
+    border-bottom: none;
+}
+
+.lesson-item:hover {
+    background: #FDFCF9;
+}
+
+.lesson-meta-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--c-ink);
+    margin-bottom: 0.25rem;
+}
+
+.lesson-meta-sub {
+    font-size: 0.82rem;
+    color: var(--c-ink-light);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.empty-section-notice {
+    padding: 2.5rem;
+    text-align: center;
+    color: var(--c-ink-light);
+    font-size: 0.95rem;
+    background: #FFFFFF;
+}
+
+/* Inline Lesson Form */
+.add-lesson-box {
+    background: #FAF6EE;
+    border-top: 1.5px dashed var(--c-gold-border);
+    padding: 2rem 2.2rem;
+}
+
+.add-lesson-box h4 {
+    font-family: var(--font-heading);
+    font-size: 1.18rem;
+    color: var(--c-primary);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-control-academic {
+    background: #FFFFFF;
+    border: 1.5px solid var(--c-gold-border);
+    border-radius: 8px;
+    padding: 0.7rem 0.95rem;
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    width: 100%;
+    color: var(--c-ink);
+    transition: var(--transition);
+}
+
+.form-control-academic:focus {
+    outline: none;
+    border-color: var(--c-gold);
+    box-shadow: 0 0 0 3px rgba(194, 155, 83, 0.18);
+    background: #FFFDF9;
+}
+
+.field-label-academic {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--c-primary);
+    margin-bottom: 0.35rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="manage-curriculum-page">
+    <div class="curriculum-header">
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span class="classic-badge" style="background: var(--c-gold); color: var(--c-primary-dark); font-size: 0.75rem;">
+                    سجل الوحدات والدروس
+                </span>
+                <span style="color: var(--c-gold-light); font-size: 0.85rem;">• صياغة المحتوى الأكاديمي</span>
+            </div>
+            <h1>{{ course.title }}</h1>
+            <p>أضف الأبواب والوحدات الدراسية، ثم اربط الدروس بالوسائط المرئية والملازم والمراجع العلمية</p>
+        </div>
+
+        <div style="display: flex; gap: 0.8rem; z-index: 2; flex-wrap: wrap;">
+            <a href="{% url 'courses:detail' course.slug %}" class="btn btn-outline" style="border-color: var(--c-gold-border); color: var(--c-gold-light);">
+                <span class="material-icons-round">visibility</span> معاينة كزائر
+            </a>
+            <a href="{% url 'courses:edit' course.slug %}" class="btn btn-secondary">
+                <span class="material-icons-round">edit_note</span> تعديل المساق
+            </a>
+            <a href="{% url 'accounts:instructor_dashboard' %}" class="btn btn-outline" style="border-color: var(--c-gold-border); color: var(--c-gold-light);">
+                <span class="material-icons-round">dashboard</span> مجلس الأستاذ
+            </a>
+        </div>
+    </div>
+
+    <!-- Add New Section -->
+    <div class="add-section-parchment">
+        <h3>
+            <span class="material-icons-round">post_add</span>
+            <span>إضافة باب أو وحدة دراسية جديدة</span>
+        </h3>
+        <form method="POST" class="add-sec-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_section">
+            <input type="text" name="title" class="form-control-academic" style="flex: 2; min-width: 250px;" placeholder="عنوان الوحدة (مثال: الباب الأول - مقدمة وتوطئة في العلم)" required>
+            <input type="number" name="order" class="form-control-academic" style="width: 130px;" placeholder="الترتيب" value="{{ course.sections.count|add:1 }}" min="1">
+            <button type="submit" class="btn btn-primary" style="padding: 0.7rem 1.6rem;">
+                <span class="material-icons-round">add_circle</span> إضافة الوحدة
+            </button>
+        </form>
+    </div>
+
+    <!-- Sections and Lessons -->
+    {% for section in course.sections.all %}
+    <div class="section-folio">
+        <div class="section-folio-header">
+            <div class="section-title-wrap">
+                <span class="section-badge-index">{{ forloop.counter }}</span>
+                <div>
+                    <span class="section-title-text">{{ section.title }}</span>
+                    <span class="section-count-tag">{{ section.lessons.count }} دروس</span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 0.6rem; align-items: center;">
+                <button type="button" class="btn btn-secondary" style="padding: 0.4rem 0.9rem; font-size: 0.88rem;" onclick="toggleAddLesson('add-lesson-sec-{{ section.id }}');">
+                    <span class="material-icons-round" style="font-size: 1.1rem;">add</span> إضافة درس جديد
+                </button>
+                <form method="POST" onsubmit="return confirm('تأكيد: هل ترغب بحذف هذه الوحدة وجميع الدروس والمرفقات التابعة لها؟');" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_section">
+                    <input type="hidden" name="section_id" value="{{ section.id }}">
+                    <button type="submit" class="btn btn-outline" style="padding: 0.4rem 0.75rem; border-color: #EAA3A3; color: #9B1C1C;" title="حذف الوحدة">
+                        <span class="material-icons-round" style="font-size: 1.1rem;">delete</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div>
+            {% for lesson in section.lessons.all %}
+            <div class="lesson-item">
+                <div style="display: flex; align-items: center; gap: 0.85rem;">
+                    <div style="width: 38px; height: 38px; border-radius: 50%; background: #FAF5EB; border: 1px solid var(--c-gold-border); display: flex; align-items: center; justify-content: center; color: var(--c-gold);">
+                        <span class="material-icons-round" style="font-size: 1.25rem;">play_circle</span>
+                    </div>
+                    <div>
+                        <div class="lesson-meta-title">{{ lesson.title }}</div>
+                        <div class="lesson-meta-sub">
+                            <span>⏱️ المدة: {{ lesson.duration_formatted }}</span>
+                            {% if lesson.is_preview %}
+                            <span>•</span>
+                            <span style="color: var(--c-emerald); font-weight: 700;">🟢 إتاحة تمهيدية مجانية</span>
+                            {% endif %}
+                            {% if lesson.resources.count %}
+                            <span>•</span>
+                            <span style="color: var(--c-primary); font-weight: 600;">📑 {{ lesson.resources.count }} مرفق تعليمي</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <a href="{% url 'courses:player' course.slug lesson.slug %}" class="btn btn-outline" style="padding: 0.35rem 0.85rem; font-size: 0.82rem; border-color: var(--c-gold-border);">
+                        <span class="material-icons-round" style="font-size: 1rem;">visibility</span> معاينة
+                    </a>
+                    <form method="POST" onsubmit="return confirm('تأكيد: هل ترغب بحذف هذا الدرس؟');" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete_lesson">
+                        <input type="hidden" name="lesson_id" value="{{ lesson.id }}">
+                        <button type="submit" class="btn btn-outline" style="padding: 0.35rem 0.65rem; border-color: #EAA3A3; color: #9B1C1C;" title="حذف الدرس">
+                            <span class="material-icons-round" style="font-size: 1rem;">close</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-section-notice">
+                <span class="material-icons-round" style="font-size: 2.2rem; color: var(--c-gold); display: block; margin-bottom: 0.5rem;">menu_book</span>
+                لا توجد دروس مدونة في هذه الوحدة حتى الآن. انقر على «إضافة درس جديد» بالأعلى لبدء التدوين.
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Add Lesson Drawer / Box -->
+        <div id="add-lesson-sec-{{ section.id }}" class="add-lesson-box" style="{% if section.lessons.count == 0 %}display: block;{% else %}display: none;{% endif %}">
+            <h4>
+                <span class="material-icons-round" style="color: var(--c-gold);">post_add</span>
+                <span>تدوين درس جديد في «{{ section.title }}»</span>
+            </h4>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="add_lesson">
+                <input type="hidden" name="section_id" value="{{ section.id }}">
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.1rem; margin-bottom: 1.1rem;">
+                    <div>
+                        <label class="field-label-academic">عنوان الدرس الأكاديمي *</label>
+                        <input type="text" name="title" class="form-control-academic" placeholder="مثال: مدخل إلى الفكر النظري والتطبيقي" required>
+                    </div>
+                    <div>
+                        <label class="field-label-academic">رابط الفيديو (YouTube أو MP4)</label>
+                        <input type="url" name="video_url" class="form-control-academic" placeholder="https://www.youtube.com/watch?v=...">
+                    </div>
+                    <div>
+                        <label class="field-label-academic">المدة المقدرة (بالدقائق)</label>
+                        <input type="number" name="duration_minutes" class="form-control-academic" value="15" min="1">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.1rem;">
+                    <label class="field-label-academic">الشرح النصي، المسائل والفوائد العلمية للدرس</label>
+                    <textarea name="content" rows="4" class="form-control-academic" placeholder="اكتب خلاصة المسائل أو الأكواد أو النقاط الجوهرية للطالب..."></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.1rem; margin-bottom: 1.3rem;">
+                    <div>
+                        <label class="field-label-academic">عنوان المرفق أو الملزمة (اختياري)</label>
+                        <input type="text" name="resource_title" class="form-control-academic" placeholder="مثال: مذكرة التلخيص الأكاديمي PDF">
+                    </div>
+                    <div>
+                        <label class="field-label-academic">ملف المرفق (PDF، ZIP، مستندات)</label>
+                        <input type="file" name="resource_file" class="form-control-academic">
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-top: 1px solid var(--c-gold-border); padding-top: 1rem;">
+                    <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-size: 0.95rem;">
+                        <input type="checkbox" name="is_preview" style="width: 18px; height: 18px; accent-color: var(--c-primary);">
+                        <strong style="color: var(--c-primary); font-family: var(--font-heading);">إتاحة هذا الدرس كمعاينة مجانية للزوار</strong>
+                    </label>
+
+                    <div style="display: flex; gap: 0.6rem;">
+                        <button type="button" class="btn btn-outline" style="border-color: var(--c-gold-border);" onclick="document.getElementById('add-lesson-sec-{{ section.id }}').style.display='none';">
+                            إغلاق
+                        </button>
+                        <button type="submit" class="btn btn-primary" style="padding: 0.65rem 1.6rem;">
+                            <span class="material-icons-round">save</span> حفظ واعتماد الدرس
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state-card" style="padding: 4rem 2rem; background: var(--c-parchment-light); border: 1.5px dashed var(--c-gold-border); border-radius: var(--radius-lg); text-align: center;">
+        <span class="material-icons-round" style="font-size: 4rem; color: var(--c-gold); margin-bottom: 1rem; display: block;">library_books</span>
+        <h3 style="font-family: var(--font-heading); font-size: 1.7rem; color: var(--c-primary); margin-bottom: 0.6rem;">المساق لا يحتوي على وحدات دراسية حتى الآن</h3>
+        <p style="color: var(--c-ink-light); max-width: 500px; margin: 0 auto 1.5rem; font-size: 1rem;">
+            ابدأ بتأسيس الباب أو الوحدة الأولى باستخدام نموذج الإضافة بالأعلى، لتتمكن من إدراج المحاضرات والدروس والمرفقات.
+        </p>
+    </div>
+    {% endfor %}
+</div>
+
+{% block extra_js %}
+<script>
+function toggleAddLesson(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = (el.style.display === 'none' || el.style.display === '') ? 'block' : 'none';
+}
+</script>
+{% endblock %}
+{% endblock %}

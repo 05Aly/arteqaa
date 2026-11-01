@@ -1,0 +1,450 @@
+<!-- templates/courses/player.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ lesson.title }} - قَاعَةُ الدِّرَاسَةِ | {{ course.title }}{% endblock %}
+
+{% block extra_css %}
+<!-- Video.js CSS -->
+<link href="https://vjs.zencdn.net/8.6.1/video-js.css" rel="stylesheet" />
+<style>
+/* Academic Study Hall Theme */
+body {
+    background: #1A080C;
+    color: #FAF6EE;
+}
+.navbar {
+    background: #28070D;
+    border-bottom: 2px solid var(--c-gold);
+}
+.nav-links a { color: #E6D8CC; }
+.nav-links a:hover, .nav-links a.active { color: var(--c-gold-light); }
+.brand-name { color: var(--c-gold-light); }
+.brand-sub { color: #C29B53; }
+.footer { display: none; }
+
+.player-layout {
+    display: grid;
+    grid-template-columns: 1fr 390px;
+    height: calc(100vh - 72px);
+}
+@media (max-width: 980px) {
+    .player-layout { grid-template-columns: 1fr; height: auto; }
+}
+
+/* Video & Study Desk Area */
+.video-area {
+    padding: 1.75rem 2.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background: #140407;
+}
+@media (max-width: 600px) {
+    .video-area { padding: 1rem; }
+}
+
+.video-wrapper {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000000;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    border: 2px solid var(--c-gold-dark);
+    position: relative;
+}
+.video-js, .video-wrapper iframe { width: 100%; height: 100%; border: none; }
+
+.lesson-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(194, 155, 83, 0.2);
+    padding-bottom: 1.25rem;
+}
+.lesson-info h1 {
+    font-family: var(--font-heading);
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin-bottom: 0.25rem;
+}
+
+/* Content Tabs */
+.tabs {
+    display: flex;
+    gap: 1.5rem;
+    border-bottom: 1px solid rgba(194, 155, 83, 0.25);
+    margin-bottom: 1.5rem;
+}
+.tab {
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    color: #C5B5A8;
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+.tab:hover { color: #FFFFFF; }
+.tab.active { color: var(--c-gold-light); border-bottom-color: var(--c-gold); }
+.tab-content { display: none; color: #E8DCD1; line-height: 1.9; font-size: 1.05rem; }
+.tab-content.active { display: block; }
+
+/* Sidebar Curriculum Ledger */
+.curriculum-sidebar {
+    background: #23080F;
+    border-right: 1px solid rgba(194, 155, 83, 0.3);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar-header {
+    padding: 1.5rem;
+    background: #2D050D;
+    border-bottom: 2px solid var(--c-gold-dark);
+}
+.sidebar-header h3 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    color: var(--c-gold-light);
+    margin-bottom: 0.5rem;
+}
+
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background: #3D121A;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-top: 0.65rem;
+    border: 1px solid rgba(194, 155, 83, 0.3);
+}
+.progress-bar {
+    height: 100%;
+    background: var(--c-gold-gradient);
+    width: {{ enrollment.progress_percent|default:0 }}%;
+    transition: width 0.5s ease;
+}
+
+/* Chapters & Lessons */
+.c-section {
+    border-bottom: 1px solid rgba(194, 155, 83, 0.15);
+}
+.c-section-header {
+    padding: 1rem 1.25rem;
+    background: rgba(35, 8, 15, 0.85);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #FAF6EE;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(194, 155, 83, 0.1);
+}
+.c-lesson {
+    padding: 0.9rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: #D3C3B5;
+    transition: var(--transition);
+    border-right: 3px solid transparent;
+}
+.c-lesson:hover { background: rgba(194, 155, 83, 0.08); color: #FFFFFF; }
+.c-lesson.active {
+    background: rgba(103, 17, 32, 0.5);
+    border-right-color: var(--c-gold);
+    color: var(--c-gold-light);
+    font-weight: 700;
+}
+.c-lesson .check-icon {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--c-gold-dark);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+.c-lesson.completed .check-icon {
+    background: var(--c-emerald);
+    border-color: var(--c-emerald-light);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="player-layout">
+    <!-- Video & Study Desk Area -->
+    <div class="video-area">
+        <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <a href="{% url 'courses:detail' course.slug %}" style="color: var(--c-gold-light); font-size: 0.95rem; font-family: var(--font-heading); display: inline-flex; align-items: center; gap: 0.4rem;">
+                <span class="material-icons-round" style="font-size: 1.15rem;">arrow_forward</span>
+                الرجوع إلى صحيفة المساق: {{ course.title }}
+            </a>
+            <span style="color: #A89587; font-size: 0.9rem; font-family: var(--font-heading);">{{ lesson.section.title }}</span>
+        </div>
+
+        <div class="video-wrapper">
+            {% if lesson.youtube_embed_url %}
+                <iframe src="{{ lesson.youtube_embed_url }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            {% elif lesson.video_url %}
+                <video
+                    id="lesson-video"
+                    class="video-js vjs-big-play-centered"
+                    controls
+                    preload="auto"
+                    data-setup='{"fluid": true}'
+                >
+                    <source src="{{ lesson.video_url }}" type="video/mp4" />
+                </video>
+            {% else %}
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #380710 0%, #150205 100%); flex-direction: column; padding: 2rem; text-align: center;">
+                    <span class="material-icons-round" style="font-size: 4.5rem; color: var(--c-gold); margin-bottom: 1rem;">auto_stories</span>
+                    <h3 style="font-family: var(--font-heading); font-size: 1.7rem; color: #FFFFFF; margin-bottom: 0.4rem;">درسٌ قرائي وتأصيلي</h3>
+                    <p style="color: #D3C3B5; max-width: 480px; font-family: var(--font-heading); font-size: 1.1rem;">طالع الملاحظات والمتون المرفقة أدناه، وعند الانتهاء اضغط على «قيد الإتمام» لتسجيل إنجازك.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="lesson-header-bar">
+            <div class="lesson-info">
+                <h1>{{ lesson.title }}</h1>
+            </div>
+            {% if user.is_authenticated %}
+            <button id="mark-complete-btn" class="btn {% if is_completed %}btn-secondary{% else %}btn-primary{% endif %}" onclick="toggleComplete(false)">
+                <span class="material-icons-round">{% if is_completed %}verified{% else %}radio_button_unchecked{% endif %}</span>
+                <span id="mark-complete-text">{% if is_completed %}تم الإتمام بنجاح{% else %}تحديد كمكتمل ومتقن{% endif %}</span>
+            </button>
+            {% endif %}
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab(event, 'content')">
+                <span class="material-icons-round" style="font-size: 1.25rem; color: var(--c-gold);">menu_book</span>
+                شروح ومتون الدرس
+            </div>
+            <div class="tab" onclick="switchTab(event, 'resources')">
+                <span class="material-icons-round" style="font-size: 1.25rem; color: var(--c-gold);">attach_file</span>
+                الصحائف والمرفقات ({{ lesson.resources.count }})
+            </div>
+        </div>
+        
+        <div id="tab-content" class="tab-content active">
+            {% if lesson.content %}
+                <div style="background: rgba(45, 10, 18, 0.4); border: 1px solid rgba(194, 155, 83, 0.2); padding: 1.75rem; border-radius: var(--radius-sm); font-family: var(--font-body);">
+                    {{ lesson.content|linebreaks }}
+                </div>
+            {% else %}
+                <p style="color: #A89587; font-family: var(--font-heading);">لا توجد حواشٍ أو متون نصية مقيدة لهذا الدرس.</p>
+            {% endif %}
+        </div>
+        
+        <div id="tab-resources" class="tab-content">
+            {% for resource in lesson.resources.all %}
+            <div style="background: rgba(45, 10, 18, 0.6); padding: 1rem 1.4rem; border-radius: var(--radius-sm); margin-bottom: 0.85rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(194, 155, 83, 0.2);">
+                <div style="display: flex; align-items: center; gap: 0.85rem;">
+                    <span class="material-icons-round" style="color: var(--c-gold); font-size: 1.75rem;">
+                        {% if resource.resource_type == 'pdf' %}picture_as_pdf
+                        {% elif resource.resource_type == 'video' %}video_file
+                        {% else %}link{% endif %}
+                    </span>
+                    <div>
+                        <div style="font-weight: 700; color: #FFFFFF; font-family: var(--font-heading); font-size: 1.15rem;">{{ resource.title }}</div>
+                        <div style="font-size: 0.8rem; color: var(--c-gold-light);">{{ resource.get_resource_type_display }}</div>
+                    </div>
+                </div>
+                {% if resource.file %}
+                    <a href="{{ resource.file.url }}" download class="btn btn-outline" style="border-color: var(--c-gold); color: var(--c-gold-light); padding: 0.4rem 1.1rem; font-size: 0.85rem;">
+                        <span class="material-icons-round" style="font-size: 1.1rem;">download</span> تحميل المرفق
+                    </a>
+                {% elif resource.external_url %}
+                    <a href="{{ resource.external_url }}" target="_blank" class="btn btn-outline" style="border-color: var(--c-gold); color: var(--c-gold-light); padding: 0.4rem 1.1rem; font-size: 0.85rem;">
+                        <span class="material-icons-round" style="font-size: 1.1rem;">open_in_new</span> فتح الرابط الخارجي
+                    </a>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p style="color: #A89587; font-family: var(--font-heading);">لا توجد مرفقات مقيدة لهذا الدرس.</p>
+            {% endfor %}
+        </div>
+        
+        <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 2rem; margin-top: 2.5rem; border-top: 1px solid rgba(194, 155, 83, 0.2);">
+            {% if prev_lesson %}
+                <a href="{% url 'courses:player' course.slug prev_lesson.slug %}" class="btn btn-outline" style="border-color: rgba(194,155,83,0.4); color: var(--c-gold-light);">
+                    <span class="material-icons-round">navigate_next</span>
+                    الدرس السابق
+                </a>
+            {% else %}
+                <span></span>
+            {% endif %}
+
+            {% if next_lesson %}
+                <a href="{% url 'courses:player' course.slug next_lesson.slug %}" class="btn btn-primary" style="background: var(--c-burgundy); border-color: var(--c-gold);">
+                    الدرس التالي
+                    <span class="material-icons-round">navigate_before</span>
+                </a>
+            {% else %}
+                <a href="{% url 'courses:detail' course.slug %}" class="btn btn-secondary">
+                    <span class="material-icons-round">workspace_premium</span>
+                    إتمام المساق والعودة للصحيفة
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Sidebar Curriculum Ledger -->
+    <aside class="curriculum-sidebar">
+        <div class="sidebar-header">
+            <h3>ديوان المنهج والدروس</h3>
+            {% if enrollment %}
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: #D3C3B5; margin-top: 0.75rem; font-family: var(--font-heading);">
+                <span>نسبة التحصيل والإتقان</span>
+                <span id="progress-text" style="font-family: var(--font-classic); color: var(--c-gold-light);">{{ enrollment.progress_percent|default:0 }}%</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div id="cert-banner" style="margin-top: 1rem; {% if not enrollment.is_completed %}display: none;{% endif %}">
+                {% if enrollment.certificate %}
+                <a href="{% url 'enrollments:certificate' enrollment.certificate.certificate_id %}" id="cert-link" class="btn btn-gold" style="width: 100%; font-size: 0.9rem; padding: 0.6rem;">
+                    <span class="material-icons-round" style="font-size: 1.15rem;">workspace_premium</span>
+                    استلام صك وشهادة الإتمام
+                </a>
+                {% else %}
+                <a href="{% url 'enrollments:my_courses' %}" id="cert-link" class="btn btn-gold" style="width: 100%; font-size: 0.9rem; padding: 0.6rem;">
+                    <span class="material-icons-round" style="font-size: 1.15rem;">workspace_premium</span>
+                    معاينة شهادة الإتمام
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="curriculum-list">
+            {% for section in course.sections.all %}
+            <div class="c-section">
+                <div class="c-section-header" onclick="const b=this.nextElementSibling; b.style.display = b.style.display === 'none' ? 'block' : 'none';">
+                    <span>{{ section.title }}</span>
+                    <span class="material-icons-round" style="font-size: 1.25rem; color: var(--c-gold);">expand_more</span>
+                </div>
+                <div class="c-section-body">
+                    {% for l in section.lessons.all %}
+                    <a href="{% url 'courses:player' course.slug l.slug %}" id="sidebar-lesson-{{ l.id }}" class="c-lesson {% if l.id == lesson.id %}active{% endif %} {% if l.id in completed_lesson_ids %}completed{% endif %}">
+                        <div class="check-icon">
+                            <span class="material-icons-round" style="font-size: 13px; color: #FFFFFF;">check</span>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 0.95rem; font-family: var(--font-heading);">{{ l.title }}</div>
+                            <div style="font-size: 0.78rem; color: #9C8C80; font-family: var(--font-classic);" dir="ltr">{{ l.duration_formatted }}</div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </aside>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://vjs.zencdn.net/8.6.1/video.min.js"></script>
+<script>
+function switchTab(e, tabName) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    e.currentTarget.classList.add('active');
+    document.getElementById('tab-' + tabName).classList.add('active');
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function toggleComplete(forceComplete = false) {
+    const btn = document.getElementById('mark-complete-btn');
+    if (!btn) return;
+    btn.disabled = true;
+    
+    fetch('{% url "enrollments:mark_complete" lesson.id %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ force_complete: forceComplete })
+    })
+    .then(response => response.json())
+    .then(data => {
+        btn.disabled = false;
+        if (data.success) {
+            const sidebarItem = document.getElementById('sidebar-lesson-{{ lesson.id }}');
+            if (data.is_completed) {
+                btn.className = 'btn btn-secondary';
+                btn.innerHTML = '<span class="material-icons-round">verified</span> <span>تم الإتمام بنجاح</span>';
+                if (sidebarItem) sidebarItem.classList.add('completed');
+                showToast('قُيِّد الدرس كمكتمل ومتقن في سجلك!', 'success');
+            } else {
+                btn.className = 'btn btn-primary';
+                btn.innerHTML = '<span class="material-icons-round">radio_button_unchecked</span> <span>تحديد كمكتمل ومتقن</span>';
+                if (sidebarItem) sidebarItem.classList.remove('completed');
+            }
+            
+            const pBar = document.getElementById('progress-bar');
+            const pText = document.getElementById('progress-text');
+            if (pBar) pBar.style.width = data.progress + '%';
+            if (pText) pText.innerText = data.progress + '%';
+            
+            if (data.is_course_completed) {
+                const certBanner = document.getElementById('cert-banner');
+                const certLink = document.getElementById('cert-link');
+                if (certBanner) certBanner.style.display = 'block';
+                if (certLink && data.certificate_id) {
+                    certLink.href = '/enrollments/certificate/' + data.certificate_id + '/';
+                }
+                showToast('مبارك! لقد أتممت المساق كاملاً وصدرت لك شهادة الإتمام المعتمدة!', 'success');
+            }
+        } else {
+            showToast(data.error || 'حدث خطأ', 'error');
+        }
+    })
+    .catch(() => {
+        btn.disabled = false;
+        showToast('تعذر الاتصال بالخادم', 'error');
+    });
+}
+
+{% if lesson.video_url and not lesson.youtube_embed_url %}
+if (document.getElementById('lesson-video')) {
+    const player = videojs('lesson-video');
+    player.on('ended', function() {
+        toggleComplete(true);
+    });
+}
+{% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,189 @@
+<!-- templates/accounts/register.html -->
+{% extends 'base.html' %}
+{% block title %}التحاق وقيد جديد - ارتقاء الأكاديمية{% endblock %}
+
+{% block extra_css %}
+<style>
+.auth-wrapper {
+    padding: 3.5rem 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.auth-container {
+    max-width: 560px;
+    width: 100%;
+    background: #FFFFFF;
+    padding: 3rem 2.5rem;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-classic);
+    border: 1px solid var(--c-border);
+    outline: 1px solid var(--c-gold-soft);
+    outline-offset: -6px;
+}
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+.auth-crest {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--c-burgundy);
+    color: var(--c-gold-light);
+    border: 2px solid var(--c-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 4px 10px rgba(58, 7, 16, 0.2);
+}
+.auth-header h1 {
+    font-family: var(--font-heading);
+    color: var(--c-burgundy-dark);
+    font-size: 2.3rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+.auth-header p {
+    color: var(--c-text-muted);
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+}
+
+.role-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+}
+.role-option input { display: none; }
+.role-card {
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    padding: 1.1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--c-text-muted);
+    background: var(--c-parchment-bg);
+}
+.role-option input:checked + .role-card {
+    border-color: var(--c-burgundy);
+    outline: 1px solid var(--c-gold);
+    background: rgba(103, 17, 32, 0.05);
+    color: var(--c-burgundy);
+}
+
+.form-group { margin-bottom: 1.25rem; }
+.form-label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--c-burgundy-dark);
+}
+.form-control {
+    width: 100%;
+    padding: 0.78rem 1rem;
+    border: 1.5px solid var(--c-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    background: var(--c-parchment-bg);
+    transition: var(--transition);
+}
+.form-control:focus {
+    outline: none;
+    border-color: var(--c-gold);
+    background: #FFFFFF;
+    box-shadow: 0 0 0 3px var(--c-gold-soft);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed var(--c-border);
+    color: var(--c-text-muted);
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+}
+.auth-footer a {
+    color: var(--c-burgundy);
+    font-weight: 700;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="auth-crest">
+                <span class="material-icons-round" style="font-size: 1.9rem;">how_to_reg</span>
+            </div>
+            <h1>قيدُ منتسبٍ جديد</h1>
+            <p>سجل بياناتك للانضمام إلى صرح ارتقاء التعليمي</p>
+        </div>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <div class="role-selector">
+                <label class="role-option">
+                    <input type="radio" name="role" value="student" {% if request.GET.role != 'instructor' and role != 'instructor' %}checked{% endif %} onchange="document.getElementById('inst-title-group').style.display='none';">
+                    <div class="role-card">
+                        <span class="material-icons-round" style="font-size: 1.8rem; color: var(--c-gold);">school</span>
+                        <span>قيد طالب علم</span>
+                    </div>
+                </label>
+                <label class="role-option">
+                    <input type="radio" name="role" value="instructor" {% if request.GET.role == 'instructor' or role == 'instructor' %}checked{% endif %} onchange="document.getElementById('inst-title-group').style.display='block';">
+                    <div class="role-card">
+                        <span class="material-icons-round" style="font-size: 1.8rem; color: var(--c-burgundy);">history_edu</span>
+                        <span>انضمام كأستاذ ومعلم</span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">الاسم الكامل (الثلاثي أو الرباعي)</label>
+                <input type="text" name="full_name" value="{{ full_name|default:'' }}" class="form-control" placeholder="أدخل اسمك كما تحب أن يظهر في الشهادات الرسمية" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">البريد الإلكتروني المعتمد</label>
+                <input type="email" name="email" value="{{ email|default:'' }}" class="form-control" placeholder="name@domain.com" required>
+            </div>
+            <div class="form-group" id="inst-title-group" style="{% if request.GET.role == 'instructor' or role == 'instructor' %}display: block;{% else %}display: none;{% endif %}">
+                <label class="form-label">الرتبة الأكاديمية أو التخصص المهني</label>
+                <input type="text" name="instructor_title" class="form-control" placeholder="مثال: أستاذ علوم الحاسب / خبير استشاري">
+            </div>
+            <div class="form-group">
+                <label class="form-label">كلمة المرور السرية</label>
+                <input type="password" name="password" class="form-control" placeholder="8 محارف على الأقل مع أرقام ورموز" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">تأكيد كلمة المرور</label>
+                <input type="password" name="confirm_password" class="form-control" placeholder="أعد إدخال كلمة المرور للتوثق" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.05rem; padding: 0.85rem; margin-top: 0.5rem;">
+                <span class="material-icons-round" style="font-size: 1.15rem; color: var(--c-gold-light);">check_circle</span>
+                إتمام القيد والانضمام للصرح
+            </button>
+        </form>
+        
+        <div class="auth-footer">
+            لديك قيدٌ مسبق في الأكاديمية؟ <a href="{% url 'accounts:login' %}">تسجيل الدخول للمنصة</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

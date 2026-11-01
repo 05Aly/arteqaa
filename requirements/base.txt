@@ -1,0 +1,8 @@
+Django>=5.0,<6.0
+django-environ
+django-unfold
+djangorestframework
+whitenoise
+Pillow
+mysqlclient
+# Note: For development, sqlite is fine, but in production MySQL is requested.
