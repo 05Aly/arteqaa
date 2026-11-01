@@ -5,6 +5,10 @@
 {% block extra_css %}
 <style>
 .form-page { padding: 3.5rem 5%; max-width: 880px; margin: 0 auto; }
+@media (max-width: 600px) {
+    .form-page { padding: 2rem 1rem; }
+    .form-card { padding: 1.75rem 1.25rem !important; }
+}
 .form-card {
     background: #FFFFFF; border-radius: var(--radius-sm); padding: 2.75rem 2.5rem;
     box-shadow: var(--shadow-classic); border: 1px solid var(--c-border);

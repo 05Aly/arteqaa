@@ -232,6 +232,20 @@
     color: var(--c-primary);
     margin-bottom: 0.35rem;
 }
+
+@media (max-width: 768px) {
+    .manage-curriculum-page { padding: 2rem 1rem 3.5rem; }
+    .curriculum-header { padding: 1.5rem 1.25rem; }
+    .curriculum-header h1 { font-size: 1.65rem; }
+    .add-section-parchment { padding: 1.25rem 1rem; }
+    .add-sec-form { flex-direction: column; }
+    .add-sec-form .form-control-academic { width: 100% !important; }
+    .add-sec-form .btn { width: 100%; justify-content: center; }
+    .section-folio-header { padding: 1rem; }
+    .lesson-item { padding: 1rem; flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+    .lesson-item > div:last-child { width: 100%; justify-content: flex-end; }
+    .add-lesson-box { padding: 1.25rem 1rem; }
+}
 </style>
 {% endblock %}
 

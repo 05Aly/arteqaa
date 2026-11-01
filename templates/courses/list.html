@@ -35,7 +35,25 @@
     align-items: start;
 }
 @media (max-width: 980px) {
-    .course-layout { grid-template-columns: 1fr; }
+    .course-layout { grid-template-columns: 1fr; padding: 2rem 1rem; }
+    .catalog-banner { padding: 2.75rem 1rem; }
+    .catalog-banner h1 { font-size: 2rem; }
+    .catalog-banner p { font-size: 1rem; }
+    .mobile-filter-btn { display: inline-flex !important; align-items: center; justify-content: center; gap: 0.5rem; }
+    .filter-sidebar { display: none; margin-bottom: 1.5rem; }
+    .filter-sidebar.filter-open { display: block !important; }
+}
+
+.mobile-filter-btn {
+    display: none;
+    background: #FAF6EE;
+    border: 1.5px solid var(--c-gold);
+    color: var(--c-burgundy);
+    padding: 0.75rem 1.25rem;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    width: 100%;
 }
 
 /* Classic Parchment Filter Sidebar */
@@ -155,6 +173,12 @@
 </div>
 
 <div class="course-layout">
+    <!-- Mobile Filter Toggle Button -->
+    <button type="button" class="mobile-filter-btn" onclick="toggleMobileSidebar()">
+        <span class="material-icons-round">tune</span>
+        <span>تصفية وفرز المساقات الأكاديمية</span>
+    </button>
+
     <!-- Sidebar Filter -->
     <aside class="filter-sidebar">
         <form method="GET" action="{% url 'courses:list' %}" id="filter-form">
@@ -336,4 +360,15 @@
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleMobileSidebar() {
+    const sidebar = document.querySelector('.filter-sidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('filter-open');
+    }
+}
+</script>
 {% endblock %}

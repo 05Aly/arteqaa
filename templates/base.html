@@ -48,11 +48,12 @@
         </div>
         
         <div class="nav-actions">
-            <form action="{% url 'courses:list' %}" method="get" class="search-bar">
+            <form action="{% url 'courses:list' %}" method="get" class="search-bar desktop-only">
                 <span class="material-icons-round search-icon">search</span>
                 <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="ابحث في سجلات المعرفة...">
             </form>
             
+            <div class="desktop-auth-links">
             {% if user.is_authenticated %}
                 {% if user.role == 'instructor' %}
                     <a href="{% url 'accounts:instructor_dashboard' %}" class="btn btn-outline">
@@ -86,10 +87,75 @@
                     انضم للمنصة
                 </a>
             {% endif %}
+            </div>
 
-            <button class="mobile-menu-btn" onclick="document.getElementById('main-navbar').classList.toggle('menu-open')" aria-label="القائمة">
-                <span class="material-icons-round">menu</span>
+            <!-- Mobile Menu Toggle Button -->
+            <button class="mobile-menu-btn" onclick="toggleMobileNav()" aria-label="القائمة">
+                <span class="material-icons-round" id="mobile-menu-icon">menu</span>
             </button>
+        </div>
+
+        <!-- Classic Mobile Drawer -->
+        <div class="mobile-drawer" id="mobile-drawer">
+            <form action="{% url 'courses:list' %}" method="get" class="mobile-search-form">
+                <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="ابحث في سجلات العلوم والكورسات...">
+                <button type="submit" aria-label="بحث">
+                    <span class="material-icons-round">search</span>
+                </button>
+            </form>
+
+            <div class="mobile-nav-links">
+                <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                    <span class="material-icons-round">home</span>
+                    <span>الرئيسية</span>
+                </a>
+                <a href="{% url 'courses:list' %}" class="{% if request.resolver_match.app_name == 'courses' and request.resolver_match.url_name != 'contact' %}active{% endif %}">
+                    <span class="material-icons-round">auto_stories</span>
+                    <span>ديوان الكورسات</span>
+                </a>
+                <a href="{% url 'accounts:instructors' %}" class="{% if request.resolver_match.url_name == 'instructors' %}active{% endif %}">
+                    <span class="material-icons-round">badge</span>
+                    <span>هيئة التدريس</span>
+                </a>
+                <a href="{% url 'courses:contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+                    <span class="material-icons-round">support_agent</span>
+                    <span>اتصل بنا</span>
+                </a>
+            </div>
+
+            <div class="mobile-drawer-auth">
+                {% if user.is_authenticated %}
+                    {% if user.role == 'instructor' %}
+                        <a href="{% url 'accounts:instructor_dashboard' %}" class="btn btn-secondary" style="width: 100%;">
+                            <span class="material-icons-round">school</span> مجلس الأستاذ
+                        </a>
+                    {% elif user.role == 'student' %}
+                        <a href="{% url 'accounts:student_dashboard' %}" class="btn btn-secondary" style="width: 100%;">
+                            <span class="material-icons-round">menu_book</span> سجل الطالب
+                        </a>
+                    {% else %}
+                        <a href="/admin/" class="btn btn-secondary" style="width: 100%;">
+                            <span class="material-icons-round">shield</span> ديوان الإدارة
+                        </a>
+                    {% endif %}
+                    <div style="display: flex; gap: 0.6rem; width: 100%; margin-top: 0.5rem;">
+                        <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline" style="flex: 1;">
+                            <span class="material-icons-round">account_circle</span> بياناتي
+                        </a>
+                        <form action="{% url 'accounts:logout' %}" method="post" style="flex: 1;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline" style="width: 100%; border-color: #EAA3A3; color: #9B1C1C;">
+                                <span class="material-icons-round">logout</span> خروج
+                            </button>
+                        </form>
+                    </div>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline" style="width: 100%;">تسجيل الدخول</a>
+                    <a href="{% url 'accounts:register' %}" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+                        <span class="material-icons-round">edit_note</span> انضم إلى الصرح
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </nav>
 
@@ -166,6 +232,15 @@
 
     <!-- Global JS -->
     <script>
+        function toggleMobileNav() {
+            const navbar = document.getElementById('main-navbar');
+            const icon = document.getElementById('mobile-menu-icon');
+            if (!navbar) return;
+            navbar.classList.toggle('menu-open');
+            if (icon) {
+                icon.textContent = navbar.classList.contains('menu-open') ? 'close' : 'menu';
+            }
+        }
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             if (!container) return;
